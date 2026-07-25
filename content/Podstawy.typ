@@ -93,10 +93,31 @@ Przykładowo, w modelach takich jak _FlashVSR_, algorytm najpierw wyznacza przyb
 _SpargeAttention_ @zhang2025spargeattentionaccuratetrainingfreesparse to uniwersalna metoda niewymagająca ponownego trenowania, która łączy cechy uwagi rzadkiej oraz kwantyzacji w celu przyspieszenia predykcji bez utraty jakości modelu. Działając w oparciu o szkielet _SageAttention_, wykorzystuje dwuetapowy filtr do pomijania zbędnych mnożeń macierzowych. W pierwszym etapie bloki $Q$ oraz $K$ wykazujące wysokie podobieństwo są kompresowane do pojedynczych tokenów, co pozwala na szybsze i bardziej precyzyjne przewidywanie oraz maskowanie rzadkich obszarów na mapie uwagi. W drugim etapie algorytm _sparse warp online softmax_ pomija obliczanie iloczynu $P V$, jeśli lokalna wartość maksymalna w danym bloku jest znacząco mniejsza od wartości maksymalnej w skali globalnej, skutecznie ignorując mało znaczące wartości.
 
 
-== Kwantyzacja sieci neuronowych
-2.4.1. Kwantyzacja wag a kwantyzacja aktywacji
-2.4.2. Tryby weight-only i dynamic
-2.4.3. Wsparcie INT8 na architekturze Ampere
+== Kwantyzacja całkowitoliczbowa
+
+Kwantyzacja całkowitoliczbowa (ang. _Integer Quantization_) polega na konwersji wartości o wysokiej precyzji (np. FP32) na nisko-precyzyjne formaty całkowitoliczbowe (np. INT8), co przyspiesza wnioskowanie poprzez wykorzystanie dedykowanych jednostek obliczeniowych i redukcję zapotrzebowania na pamięć. Proces ten opiera się na operacji kwantyzacji, czyli mapowaniu wartości rzeczywistych na całkowite, oraz dekwantyzacji, odpowiedzialnej za odtworzenie wartości przybliżonych @wu2020integerquantizationdeeplearning.
+
+=== Mechanizmy mapowania
+
+Jednostajna kwantyzacja przekształca rzeczywiste wartości $x in [beta, alpha]$ na $b$-bitowe reprezentacje całkowitoliczbowe $x_q$. Przekształcenie to opiera się na transformacji afinicznej (ang. _affine quantization_) $f(x) = s dot x + z$ lub jej szczególnym przypadku - transformacji skalowanej (ang. _scale quantization_) $f(x) = s dot x$ @wu2020integerquantizationdeeplearning.
+
+Kwantyzacja afiniczna mapuje zakres rzeczywisty na przedział ze znakiem $[-2^(b-1), 2^(b-1)-1]$ przy użyciu skali $s = (2^b - 1) / (alpha - beta)$ oraz całkowitoliczbowego punktu zerowego $z = -text("round")(beta dot s) - 2^(b-1)$, odpowiedzialnego za dokładne odwzorowanie wartości zero. Samą kwantyzację oraz dekwantyzację definiuje się wzorami:
+$ x_q = text("clip")(text("round")(s dot x + z), -2^(b-1), 2^(b-1)-1), quad hat(x) = 1/s (x_q - z) $
+
+Kwantyzacja skalowana (w wariancie symetrycznym) zakłada symetrię przedziału wejściowego $[-alpha, alpha]$ oraz zakresu bitowego wokół zera (dla INT8 jest to $[-127, 127]$, bez wartości $-128$). Przy skali $s = (2^(b-1) - 1) / alpha$, operacje przyjmują postać:
+$ x_q = text("clip")(text("round")(s dot x), -2^(b-1)+1, 2^(b-1)-1), quad hat(x) = 1/s x_q $
+
+=== Kwantyzacja wag (Weights)
+
+Ponieważ wagi podczas inferencji są statyczne wyznaczanie ich parametrów kwantyzacji odbywa się w trybie offline. W tym celu stosuje się kwantyzację kanałową (ang. _per-channel_), która zachowuje dokładność modelu przy zróżnicowanych rozkładach cech pomiędzy kanałami. Zakres wartości $alpha$ i $beta$ określa się zazwyczaj za pomocą kalibracji bazującej na maksymalnej wartości (_max calibration_), przy czym zdecydowanie preferuje się wariant symetryczny, ponieważ brak współczynnika $z$ eliminuje dodatkowy narzut obliczeniowy podczas mnożenia macierzy @wu2020integerquantizationdeeplearning.
+
+=== Kwantyzacja aktywacji
+
+Dynamiczna natura aktywacji wymusza odmienne podejście do wyznaczania zakresów mapowania. Aby umożliwić wydajne mnożenie macierzy, aktywacje kwantyzuje się na poziomie całego tensora (_per-tensor_). Ze względu na częstą obecność wartości odstających , zamiast kalibracji maksymalnej stosuje się kalibrację entropijną lub percentylową, co zapobiega spychaniu większości poprawnych wartości do zbyt wąskiego przedziału bitowego.
+
+Połączenie symetrycznej kwantyzacji _per-channel_ dla wag oraz kwantyzacji _per-tensor_ z kalibracją entropijną lub percentylową dla aktywacji pozwala na prowadzenie obliczeń w pełni na arytmetyce INT8 przy dokładności zbliżonej względem modelu bazowego FP32 @wu2020integerquantizationdeeplearning.
+
+
 == Kafelkowanie przestrzenne i czasowe
 == Metryki oceny jakości wideo
 2.6.1. Metryki pełnoreferencyjne
