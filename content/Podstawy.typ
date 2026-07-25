@@ -118,8 +118,28 @@ Dynamiczna natura aktywacji wymusza odmienne podejście do wyznaczania zakresów
 Połączenie symetrycznej kwantyzacji _per-channel_ dla wag oraz kwantyzacji _per-tensor_ z kalibracją entropijną lub percentylową dla aktywacji pozwala na prowadzenie obliczeń w pełni na arytmetyce INT8 przy dokładności zbliżonej względem modelu bazowego FP32 @wu2020integerquantizationdeeplearning.
 
 
-== Kafelkowanie przestrzenne i czasowe
-== Metryki oceny jakości wideo
-2.6.1. Metryki pełnoreferencyjne
-2.6.2. Metryki bezreferencyjne
-2.6.3. Ograniczenia metryk dla modeli generatywnych
+=== Metryki oceny jakości obrazu i wideo
+
+W celu przeprowadzenia kompleksowej ewaluacji jakości wygenerowanych sekwencji wideo zastosowano zestaw siedmiu metryk badawczych, obejmujący zarówno tradycyjne wskaźniki pełnoreferencyjne (ang. _Full-Reference_), jak i zaawansowane metryki percepcyjne oraz bezreferencyjne (ang. _No-Reference_).
+
+==== Metryki pełnoreferencyjne
+
+Metryki pełnoreferencyjne wymagają bezpośredniego porównania wygenerowanej klatki lub sekwencji ze źródłowym materiałem referencyjnym (ang. _Ground Truth_, GT).
+
+Stosunek sygnału szczytowego do szumu (PSNR, ang. _Peak Signal-to-Noise Ratio_) @psnr jest obiektywną metryką wyznaczającą stosunek maksymalnej możliwej wartości sygnału do błędu średniokwadratowego na poziomie poszczególnych pikseli. Mimo powszechnego stosowania w literaturze, metryka ta zakłada niezależność pikseli i wykazuje niską korelację z ludzką percepcją jakości wizualnej @Baniya_2024.
+
+Wskaźnik podobieństwa strukturalnego (SSIM, ang. _Structural Similarity Index Measure_) @ssim ocenia podobieństwo strukturalne między obrazami na podstawie analizy trzech komponentów: jasności (luminancji), kontrastu oraz informacji strukturalnej. Wartości metryki zawierają się w przedziale $[-1, 1]$, gdzie wartość $1$ oznacza idealną zgodność. Choć SSIM lepiej odzwierciedla percepcję wzrokową niż PSNR, może dawać sprzeczne z intuicją wyniki w sytuacjach znacznych różnic kolorystycznych lub w bardzo ciemnych scenach @Baniya_2024.
+
+Głęboka percepcyjna miara podobieństwa fragmentów obrazu (LPIPS, ang. _Learned Perceptual Image Patch Similarity_) @lpips mierzy percepcyjną odmienność wizualną z wykorzystaniem cech wysokiego poziomu, wyekstrahowanych z głębokiej sieci neuronowej (np. VGG-16). Dzięki wykorzystaniu reprezentacji wyuczonych na dużych zbiorach danych, LPIPS odzwierciedla subiektywne oceny ludzkie w stopniu znacznie wyższym niż klasyczne miary pikselowe @Baniya_2024.
+
+==== Metryki bezreferencyjne (No-Reference)
+
+Metryki bezreferencyjne dokonują oceny jakości lub estetyki obrazu oraz wideo bez konieczności dostępu do materiału wzorcowego.
+
+Naturalny ewaluator jakości obrazu (NIQE, ang. _Natural Image Quality Evaluator_) @niqe ocenia stopień naturalności i zniekształceń obrazu poprzez ekstrakcję cech statystycznych (takich jak dane o jasności, kontraście czy krawędziach) i ich dopasowanie do wielowymiarowego rozkładu Gaussa. Metryka ta może jednak wykazywać niestabilność lub generować błędne wyniki w przypadku treści nietypowych, takich jak całkowicie czarne klatki, grafika komputerowa czy specyficzne tekstury o wysokiej częstotliwości.
+
+Wieloskalowy transformer jakości obrazu (MUSIQ, ang. _Multi-scale Image Quality Transformer_) @musiq jest bezreferencyjną metryką opartą na architekturze Transformer, dedykowaną do przetwarzania obrazów w ich natywnej rozdzielczości. Dzięki wieloskalowej analizie obrazu podzielonego na fragmenty, MUSIQ eliminuje potrzebę przeskalowywania lub przycinania wejścia, precyzyjnie wychwytując zarówno globalną strukturę, jak i lokalne detale.
+
+CLIPIQA @clipiqa wykorzystuje przestrzeń wizyjno-językową modeli wstępnie wytrenowanych CLIP do oceny zarówno aspektów technicznych, jak i właściwości estetycznych obrazu. Metryka ta nie wymaga ręcznie projektowanych cech ani dedykowanego uczenia pod konkretne zadanie, lecz wyznacza jakość poprzez pomiar dopasowania obrazu do przeciwstawnych promptów tekstowych (np. _"Good photo"_ vs. _"Bad photo"_).
+
+DOVER (ang. _Disentangled Objective Video Quality Evaluator_) @dover stanowi wyspecjalizowaną metrykę oceny jakości sekwencji wideo. Konstrukcja DOVER pozwala na predykcję subiektywnego doświadczenia jakości użytkownika w zróżnicowanych nagraniach wideo poprzez niezależne rozdzielenie analizy na aspekt estetyczny (jakość przestrzenna) oraz techniczny (spójność czasowa i płynność ruchu).
