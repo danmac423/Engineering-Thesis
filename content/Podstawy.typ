@@ -62,7 +62,7 @@ Połączenie zalet modeli dyfuzyjnych w przestrzeni ukrytej (LDM) oraz skalowaln
 
 Przetwarzanie w DiT rozpoczyna się od skompresowania obrazu do przestrzeni ukrytej za pomocą zamrożonego, wstępnie wytrenowanego autoenkodera (np. VAE). Na tak uzyskanej reprezentacji $z_0$ aplikowany jest proces dyfuzji, a zaszumiony wektor ukryty $z_t$ dzielony jest na siatkę płatów. Następnie są one rzutowane liniowo na sekwencję tokenów i wzbogacane o sinusoidalne osadzenia pozycyjne. Kluczową innowacją architektury DiT jest sposób wstrzykiwania informacji warunkujących, takich jak krok czasowy $t$ czy etykieta klasy $c$. Do tego celu wykorzystuje się zmodyfikowane bloki z adaptacyjną normalizacją warstwową (ang. _adaptive layer normalization_, adaLN-Zero). Zamiast standardowej normalizacji, sieć regresuje parametry skali i przesunięcia $(gamma, beta)$ oraz skalar przeskalowujący $alpha$ bezpośrednio z sumy wektorów osadzeń warunków. Po przejściu przez bloki DiT, wyjściowa sekwencja tokenów jest dekodowana liniowo i reorganizowana do pierwotnego kształtu reprezentacji ukrytej, skąd dekoder przekształca ją z powrotem do przestrzeni pikseli @peebles2023scalablediffusionmodelstransformers.
 
-Głównym wyzwaniem w adaptacji architektur DiT do zadań superrozdzielczości wideo jest potrzeba uwarunkowania procesu generatywnego nagraniem LR. W modelach VSR opartych na DiT (takich jak _FlashVSR_) sekwencja HR nie jest generowana z czystego szumu; zamiast tego do sterowania odtwarzaniem detali wykorzystuje się wideo LR. Wbudowywanie warunku realizuje się m.in. poprzez rzutowanie klatek LR za pomocą lekkiej warstwy konwolucyjnej (_Proj-In_) i dodanie tak uzyskanych cech do tokenów jako osadzenia warunkujące @Zhuang2025FlashVSRTR. W VSR natomiast kluczowe staje się ścisłe uwarunkowanie nagraniem LR. W efekcie sekwencja HR nie powstaje z czystego szumu, lecz jest ściśle kierowana przez strukturę wejściową. W modelach takich jak _FlashVSR_ wbudowywanie tego warunku realizuje się m.in. poprzez rzutowanie klatek LR za pomocą lekkiej warstwy konwolucyjnej (_Proj-In_) i dodanie tak uzyskanych cech do tokenów jako osadzenia warunkujące @Zhuang2025FlashVSRTR.
+Głównym wyzwaniem w adaptacji architektur DiT do zadań superrozdzielczości wideo jest potrzeba uwarunkowania procesu generatywnego nagraniem LR. W modelach VSR opartych na DiT (takich jak _FlashVSR_) sekwencja HR nie jest generowana z czystego szumu; zamiast tego do sterowania odtwarzaniem detali wykorzystuje się wideo LR. Wbudowywanie warunku realizuje się m.in. poprzez rzutowanie klatek LR za pomocą lekkiej warstwy konwolucyjnej (_Proj-In_) i dodanie tak uzyskanych cech do tokenów jako osadzenia warunkujące @Zhuang2025FlashVSRTR.
 
 == Optymalizacje mechanizmu uwagi
 
@@ -78,7 +78,7 @@ _FlashAttention_ @dao2022flashattentionfastmemoryefficientexact niweluje ogranic
 
 === SageAttention
 
-_SageAttention_ @zhang2025sageattentionaccurate8bitattention przyspiesza wnioskowanie wykorzystując kwantyzację. Ponieważ operacje mnożenia macierzy w formacie INT8 na nowoczesnych jednostkach GPU są znacznie szybsze niż w formatach FP16 czy FP8, metoda kwantyzuje macierze $Q$ i $K$ do formatu INT8, pozostawiając macierze $P$ (macierz wag uwagi po operacji _softmax_) oraz $V$ w formacie FP16. Aby zapobiec utracie dokładności wynikającej z ograniczonego zakresu liczbowego, wprowadzono technikę wygładzania usuwającą wartości odstające z macierzy $K$.
+_SageAttention_ @zhang2025sageattentionaccurate8bitattention przyspiesza wnioskowanie, wykorzystując kwantyzację. Ponieważ operacje mnożenia macierzy w formacie INT8 na nowoczesnych jednostkach GPU są znacznie szybsze niż w formatach FP16 czy FP8, metoda kwantyzuje macierze $Q$ i $K$ do formatu INT8, pozostawiając macierze $P$ (macierz wag uwagi po operacji _softmax_) oraz $V$ w formacie FP16. Aby zapobiec utracie dokładności wynikającej z ograniczonego zakresu liczbowego, wprowadzono technikę wygładzania usuwającą wartości odstające z macierzy $K$.
 
 Wersja _SageAttention2_ @zhang2025sageattention2efficientattentionthorough wprowadza jeszcze szybszą kwantyzację INT4 dla $Q$ i $K$ oraz kwantyzację FP8 dla $P$ i $V$, łącząc to z kompleksowym wygładzaniem wartości odstających dla obu macierzy $Q$ i $K$.
 
@@ -109,13 +109,13 @@ $ x_q = text("clip")(text("round")(s dot x), -2^(b-1)+1, 2^(b-1)-1), quad hat(x)
 
 === Kwantyzacja wag (Weights)
 
-Ponieważ wagi podczas inferencji są statyczne wyznaczanie ich parametrów kwantyzacji odbywa się w trybie offline. W tym celu stosuje się kwantyzację kanałową (ang. _per-channel_), która zachowuje dokładność modelu przy zróżnicowanych rozkładach cech pomiędzy kanałami. Zakres wartości $alpha$ i $beta$ określa się zazwyczaj za pomocą kalibracji bazującej na maksymalnej wartości (_max calibration_), przy czym zdecydowanie preferuje się wariant symetryczny, ponieważ brak współczynnika $z$ eliminuje dodatkowy narzut obliczeniowy podczas mnożenia macierzy @wu2020integerquantizationdeeplearning.
+Ponieważ wagi podczas inferencji są statyczne, wyznaczanie ich parametrów kwantyzacji odbywa się w trybie offline. W tym celu stosuje się kwantyzację kanałową (ang. _per-channel_), która zachowuje dokładność modelu przy zróżnicowanych rozkładach cech pomiędzy kanałami. Zakres wartości $alpha$ i $beta$ określa się zazwyczaj za pomocą kalibracji bazującej na maksymalnej wartości (_max calibration_), przy czym zdecydowanie preferuje się wariant symetryczny, ponieważ brak współczynnika $z$ eliminuje dodatkowy narzut obliczeniowy podczas mnożenia macierzy @wu2020integerquantizationdeeplearning.
 
 === Kwantyzacja aktywacji
 
-Dynamiczna natura aktywacji wymusza odmienne podejście do wyznaczania zakresów mapowania. Aby umożliwić wydajne mnożenie macierzy, aktywacje kwantyzuje się na poziomie całego tensora (_per-tensor_). Ze względu na częstą obecność wartości odstających , zamiast kalibracji maksymalnej stosuje się kalibrację entropijną lub percentylową, co zapobiega spychaniu większości poprawnych wartości do zbyt wąskiego przedziału bitowego.
+Dynamiczna natura aktywacji wymusza odmienne podejście do wyznaczania zakresów mapowania. Aby umożliwić wydajne mnożenie macierzy, aktywacje kwantyzuje się na poziomie całego tensora (_per-tensor_). Ze względu na częstą obecność wartości odstających, zamiast kalibracji maksymalnej stosuje się kalibrację entropijną lub percentylową, co zapobiega spychaniu większości poprawnych wartości do zbyt wąskiego przedziału bitowego.
 
-Połączenie symetrycznej kwantyzacji _per-channel_ dla wag oraz kwantyzacji _per-tensor_ z kalibracją entropijną lub percentylową dla aktywacji pozwala na prowadzenie obliczeń w pełni na arytmetyce INT8 przy dokładności zbliżonej względem modelu bazowego FP32 @wu2020integerquantizationdeeplearning.
+Połączenie symetrycznej kwantyzacji _per-channel_ dla wag oraz kwantyzacji _per-tensor_ z kalibracją entropijną lub percentylową dla aktywacji pozwala na prowadzenie obliczeń w pełni na arytmetyce INT8 przy dokładności zbliżonej do modelu bazowego FP32 @wu2020integerquantizationdeeplearning.
 
 
 === Metryki oceny jakości obrazu i wideo
@@ -132,7 +132,7 @@ Wskaźnik podobieństwa strukturalnego (SSIM, ang. _Structural Similarity Index 
 
 Głęboka percepcyjna miara podobieństwa fragmentów obrazu (LPIPS, ang. _Learned Perceptual Image Patch Similarity_) @lpips mierzy percepcyjną odmienność wizualną z wykorzystaniem cech wysokiego poziomu, wyekstrahowanych z głębokiej sieci neuronowej (np. VGG-16). Dzięki wykorzystaniu reprezentacji wyuczonych na dużych zbiorach danych, LPIPS odzwierciedla subiektywne oceny ludzkie w stopniu znacznie wyższym niż klasyczne miary pikselowe @Baniya_2024.
 
-==== Metryki bezreferencyjne (No-Reference)
+==== Metryki bezreferencyjne
 
 Metryki bezreferencyjne dokonują oceny jakości lub estetyki obrazu oraz wideo bez konieczności dostępu do materiału wzorcowego.
 
