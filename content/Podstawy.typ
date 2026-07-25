@@ -65,11 +65,32 @@ Przetwarzanie w DiT rozpoczyna się od skompresowania obrazu do przestrzeni ukry
 Głównym wyzwaniem w adaptacji architektur DiT do zadań superrozdzielczości wideo jest potrzeba uwarunkowania procesu generatywnego nagraniem LR. W modelach VSR opartych na DiT (takich jak _FlashVSR_) sekwencja HR nie jest generowana z czystego szumu; zamiast tego do sterowania odtwarzaniem detali wykorzystuje się wideo LR. Wbudowywanie warunku realizuje się m.in. poprzez rzutowanie klatek LR za pomocą lekkiej warstwy konwolucyjnej (_Proj-In_) i dodanie tak uzyskanych cech do tokenów jako osadzenia warunkujące @Zhuang2025FlashVSRTR. W VSR natomiast kluczowe staje się ścisłe uwarunkowanie nagraniem LR. W efekcie sekwencja HR nie powstaje z czystego szumu, lecz jest ściśle kierowana przez strukturę wejściową. W modelach takich jak _FlashVSR_ wbudowywanie tego warunku realizuje się m.in. poprzez rzutowanie klatek LR za pomocą lekkiej warstwy konwolucyjnej (_Proj-In_) i dodanie tak uzyskanych cech do tokenów jako osadzenia warunkujące @Zhuang2025FlashVSRTR.
 
 == Optymalizacje mechanizmu uwagi
-=== Uwaga skalowana iloczynem skalarnym (Scaled Dot-Product Attention)
-=== Algorytmy sprzętowo zoptymalizowane (FlashAttention, SageAttention)
-=== Rzadkość strukturalna i maski blokowe
 
+Standardowy mechanizm uwagi oparty na iloczynie skalarnym ze skalowaniem (_Scaled Dot-Product Attention_) stanowi fundament architektury Transformer. Odwzorowuje on zapytania ($Q$), klucze ($K$) oraz wartości ($V$) na wektor wyjściowy zgodnie z zależnością @vaswani2023attentionneed:
 
+$ "Attention"(Q, K, V) = "softmax"((Q K^T) / sqrt(d_k)) V $
+
+gdzie $d_k$ oznacza wymiarowość kluczy, a dzielenie przez $sqrt(d_k)$ zapobiega zanikaniu gradientów dla dużych wartości iloczynu skalarnego. Mimo że operacja ta opiera się na wydajnych mnożeniach macierzowych, charakteryzuje się kwadratową złożonością obliczeniową i pamięciową $O(N^2)$ względem długości sekwencji $N$. Wynika to z konieczności bezpośredniego zapisywania pełnej, pośredniej macierzy macierzy uwagi w pamięci karty graficznej @dao2022flashattentionfastmemoryefficientexact.
+
+=== FlashAttention
+
+_FlashAttention_ @dao2022flashattentionfastmemoryefficientexact niweluje ograniczenia pamięciowe poprzez algorytm optymalizujący przepływ danych, nie wprowadzając przy tym żadnych aproksymacji. Zamiast zapisywać pośrednią macierz uwagi w wolniejszej pamięci HBM (ang. _High Bandwidth Memory_), algorytm stosuje technikę kafelkowania (ang. _tiling_). Bloki macierzy $Q$, $K$ i $V$ są ładowane do znacznie szybszej pamięci podręcznej SRAM na chipie GPU, gdzie stopniowo obliczana jest redukcja _softmax_, a do pamięci HBM zapisywany jest jedynie ostateczny wynik.
+
+=== SageAttention
+
+_SageAttention_ @zhang2025sageattentionaccurate8bitattention przyspiesza wnioskowanie wykorzystując kwantyzację. Ponieważ operacje mnożenia macierzy w formacie INT8 na nowoczesnych jednostkach GPU są znacznie szybsze niż w formatach FP16 czy FP8, metoda kwantyzuje macierze $Q$ i $K$ do formatu INT8, pozostawiając macierze $P$ (macierz wag uwagi po operacji _softmax_) oraz $V$ w formacie FP16. Aby zapobiec utracie dokładności wynikającej z ograniczonego zakresu liczbowego, wprowadzono technikę wygładzania usuwającą wartości odstające z macierzy $K$.
+
+Wersja _SageAttention2_ @zhang2025sageattention2efficientattentionthorough wprowadza jeszcze szybszą kwantyzację INT4 dla $Q$ i $K$ oraz kwantyzację FP8 dla $P$ i $V$, łącząc to z kompleksowym wygładzaniem wartości odstających dla obu macierzy $Q$ i $K$.
+
+=== Block Sparse Attention: Odrzucanie redundantnych interakcji
+
+_Block Sparse Attention_ to metoda aproksymacyjna redukująca złożoność poprzez odrzucanie nadmiarowych obliczeń. Zamiast pełnych interakcji uwaga ograniczana jest wyłącznie do wybranych, niezerowych bloków.
+
+Przykładowo, w modelach takich jak _FlashVSR_, algorytm najpierw wyznacza przybliżoną mapę uwagi poprzez uśrednianie (ang. _average pooling_) cech kluczy i wartości w celu uzyskania reprezentacji blokowych. Następnie wybierana jest grupa $k$ najbardziej istotnych par bloków (ang. _top-k_), a pełny mechanizm uwagi aplikowany jest wyłącznie do tych obszarów. Integracja tej metody z _FlashAttention_ pozwala obniżyć złożoność operacji wejścia/wyjścia proporcjonalnie do współczynnika rzadkości @dao2022flashattentionfastmemoryefficientexact.
+
+=== SpargeAttention
+
+_SpargeAttention_ @zhang2025spargeattentionaccuratetrainingfreesparse to uniwersalna metoda niewymagająca ponownego trenowania, która łączy cechy uwagi rzadkiej oraz kwantyzacji w celu przyspieszenia predykcji bez utraty jakości modelu. Działając w oparciu o szkielet _SageAttention_, wykorzystuje dwuetapowy filtr do pomijania zbędnych mnożeń macierzowych. W pierwszym etapie bloki $Q$ oraz $K$ wykazujące wysokie podobieństwo są kompresowane do pojedynczych tokenów, co pozwala na szybsze i bardziej precyzyjne przewidywanie oraz maskowanie rzadkich obszarów na mapie uwagi. W drugim etapie algorytm _sparse warp online softmax_ pomija obliczanie iloczynu $P V$, jeśli lokalna wartość maksymalna w danym bloku jest znacząco mniejsza od wartości maksymalnej w skali globalnej, skutecznie ignorując mało znaczące wartości.
 
 
 == Kwantyzacja sieci neuronowych
