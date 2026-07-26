@@ -78,7 +78,7 @@ _FlashAttention_ @dao2022flashattentionfastmemoryefficientexact niweluje ogranic
 
 === SageAttention
 
-_SageAttention_ @zhang2025sageattentionaccurate8bitattention przyspiesza wnioskowanie, wykorzystując kwantyzację. Ponieważ operacje mnożenia macierzy w formacie INT8 na nowoczesnych jednostkach GPU są znacznie szybsze niż w formatach FP16 czy FP8, metoda kwantyzuje macierze $Q$ i $K$ do formatu INT8, pozostawiając macierze $P$ (macierz wag uwagi po operacji _softmax_) oraz $V$ w formacie FP16. Aby zapobiec utracie dokładności wynikającej z ograniczonego zakresu liczbowego, wprowadzono technikę wygładzania usuwającą wartości odstające z macierzy $K$.
+_SageAttention_ @zhang2025sageattentionaccurate8bitattention przyspiesza inferencję, wykorzystując kwantyzację. Ponieważ operacje mnożenia macierzy w formacie INT8 na nowoczesnych jednostkach GPU są znacznie szybsze niż w formatach FP16 czy FP8, metoda kwantyzuje macierze $Q$ i $K$ do formatu INT8, pozostawiając macierze $P$ (macierz wag uwagi po operacji _softmax_) oraz $V$ w formacie FP16. Aby zapobiec utracie dokładności wynikającej z ograniczonego zakresu liczbowego, wprowadzono technikę wygładzania usuwającą wartości odstające z macierzy $K$.
 
 Wersja _SageAttention2_ @zhang2025sageattention2efficientattentionthorough wprowadza jeszcze szybszą kwantyzację INT4 dla $Q$ i $K$ oraz kwantyzację FP8 dla $P$ i $V$, łącząc to z kompleksowym wygładzaniem wartości odstających dla obu macierzy $Q$ i $K$.
 
@@ -95,7 +95,7 @@ _SpargeAttention_ @zhang2025spargeattentionaccuratetrainingfreesparse to uniwers
 
 == Kwantyzacja całkowitoliczbowa
 
-Kwantyzacja całkowitoliczbowa (ang. _Integer Quantization_) polega na konwersji wartości o wysokiej precyzji (np. FP32) na nisko-precyzyjne formaty całkowitoliczbowe (np. INT8), co przyspiesza wnioskowanie poprzez wykorzystanie dedykowanych jednostek obliczeniowych i redukcję zapotrzebowania na pamięć. Proces ten opiera się na operacji kwantyzacji, czyli mapowaniu wartości rzeczywistych na całkowite, oraz dekwantyzacji, odpowiedzialnej za odtworzenie wartości przybliżonych @wu2020integerquantizationdeeplearning.
+Kwantyzacja całkowitoliczbowa (ang. _Integer Quantization_) polega na konwersji wartości o wysokiej precyzji (np. FP32) na nisko-precyzyjne formaty całkowitoliczbowe (np. INT8), co przyspiesza inferencję poprzez wykorzystanie dedykowanych jednostek obliczeniowych i redukcję zapotrzebowania na pamięć. Proces ten opiera się na operacji kwantyzacji, czyli mapowaniu wartości rzeczywistych na całkowite, oraz dekwantyzacji, odpowiedzialnej za odtworzenie wartości przybliżonych @wu2020integerquantizationdeeplearning.
 
 === Mechanizmy mapowania
 
