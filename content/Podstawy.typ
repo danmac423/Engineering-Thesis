@@ -70,7 +70,7 @@ Standardowy mechanizm uwagi oparty na iloczynie skalarnym ze skalowaniem (_Scale
 
 $ "Attention"(Q, K, V) = "softmax"((Q K^T) / sqrt(d_k)) V $
 
-gdzie $d_k$ oznacza wymiarowość kluczy, a dzielenie przez $sqrt(d_k)$ zapobiega zanikaniu gradientów dla dużych wartości iloczynu skalarnego. Mimo że operacja ta opiera się na wydajnych mnożeniach macierzowych, charakteryzuje się kwadratową złożonością obliczeniową i pamięciową $O(N^2)$ względem długości sekwencji $N$. Wynika to z konieczności bezpośredniego zapisywania pełnej, pośredniej macierzy macierzy uwagi w pamięci karty graficznej @dao2022flashattentionfastmemoryefficientexact.
+gdzie $d_k$ oznacza wymiarowość kluczy, a dzielenie przez $sqrt(d_k)$ zapobiega zanikaniu gradientów dla dużych wartości iloczynu skalarnego. Mimo że operacja ta opiera się na wydajnych mnożeniach macierzowych, charakteryzuje się kwadratową złożonością obliczeniową i pamięciową $O(N^2)$ względem długości sekwencji $N$. Wynika to z konieczności bezpośredniego zapisywania pełnej, pośredniej macierzy uwagi w pamięci karty graficznej @dao2022flashattentionfastmemoryefficientexact.
 
 === FlashAttention
 
@@ -118,11 +118,11 @@ Dynamiczna natura aktywacji wymusza odmienne podejście do wyznaczania zakresów
 Połączenie symetrycznej kwantyzacji _per-channel_ dla wag oraz kwantyzacji _per-tensor_ z kalibracją entropijną lub percentylową dla aktywacji pozwala na prowadzenie obliczeń w pełni na arytmetyce INT8 przy dokładności zbliżonej do modelu bazowego FP32 @wu2020integerquantizationdeeplearning.
 
 
-=== Metryki oceny jakości obrazu i wideo
+== Metryki oceny jakości obrazu i wideo
 
 W celu przeprowadzenia kompleksowej ewaluacji jakości wygenerowanych sekwencji wideo zastosowano zestaw siedmiu metryk badawczych, obejmujący zarówno tradycyjne wskaźniki pełnoreferencyjne (ang. _Full-Reference_), jak i zaawansowane metryki percepcyjne oraz bezreferencyjne (ang. _No-Reference_).
 
-==== Metryki pełnoreferencyjne
+=== Metryki pełnoreferencyjne
 
 Metryki pełnoreferencyjne wymagają bezpośredniego porównania wygenerowanej klatki lub sekwencji ze źródłowym materiałem referencyjnym (ang. _Ground Truth_, GT).
 
@@ -132,7 +132,7 @@ Wskaźnik podobieństwa strukturalnego (SSIM, ang. _Structural Similarity Index 
 
 Głęboka percepcyjna miara podobieństwa fragmentów obrazu (LPIPS, ang. _Learned Perceptual Image Patch Similarity_) @lpips mierzy percepcyjną odmienność wizualną z wykorzystaniem cech wysokiego poziomu, wyekstrahowanych z głębokiej sieci neuronowej (np. VGG-16). Dzięki wykorzystaniu reprezentacji wyuczonych na dużych zbiorach danych, LPIPS odzwierciedla subiektywne oceny ludzkie w stopniu znacznie wyższym niż klasyczne miary pikselowe @Baniya_2024.
 
-==== Metryki bezreferencyjne
+=== Metryki bezreferencyjne
 
 Metryki bezreferencyjne dokonują oceny jakości lub estetyki obrazu oraz wideo bez konieczności dostępu do materiału wzorcowego.
 
