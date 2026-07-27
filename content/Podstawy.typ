@@ -92,7 +92,7 @@ _SageAttention_ @zhang2025sageattentionaccurate8bitattention przyspiesza inferen
 
 Wersja _SageAttention2_ @zhang2025sageattention2efficientattentionthorough wprowadza jeszcze szybszą kwantyzację INT4 dla $Q$ i $K$ oraz kwantyzację FP8 dla $P$ i $V$, łącząc to z kompleksowym wygładzaniem wartości odstających dla obu macierzy $Q$ i $K$.
 
-=== Block Sparse Attention: Odrzucanie redundantnych interakcji
+=== Block Sparse Attention
 <block-sparse-attention-odrzucanie-redundantnych-interakcji>
 
 _Block Sparse Attention_ to metoda aproksymacyjna redukująca złożoność poprzez odrzucanie nadmiarowych obliczeń. Zamiast pełnych interakcji uwaga ograniczana jest wyłącznie do wybranych, niezerowych bloków.

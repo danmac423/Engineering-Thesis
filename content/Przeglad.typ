@@ -47,7 +47,7 @@ Dotychczasowy rozwój metod VSR pokazuje wyraźną ewolucję od szybkich, lecz o
 
 Metody klasyczne (CNN/RNN) oferują najwyższą szybkość i niskie zużycie pamięci, jednak mają tendencję do generowania rozmytych tekstur. Transformery skutecznie modelują długoterminowe zależności czasowe, ale ich złożoność obliczeniowa rośnie kwadratowo wraz z długością sekwencji. Wielokrokowe modele dyfuzyjne zapewniają najwyższy fotorealizm, lecz konieczność wykonywania kilkudziesięciu iteracji pętli odszumiania uniemożliwia ich zastosowanie w trybie interaktywnym.
 
-Architektura FlashVSR przełamuje to ograniczenie poprzez sprowadzenie procesu dyfuzji do jednego kroku inferencji oraz wprowadzenie mechanizmów strumieniowych i dedykowanego dekodera. Jakościowe zestawienie cech poszczególnych klas metod przedstawiono w @tab:vsr-comparison[tabeli].
+Architektura _FlashVSR_ przełamuje to ograniczenie poprzez sprowadzenie procesu dyfuzji do jednego kroku inferencji oraz wprowadzenie mechanizmów strumieniowych i dedykowanego dekodera. Jakościowe zestawienie cech poszczególnych klas metod przedstawiono w @tab:vsr-comparison[tabeli].
 
 #figure(
   kind: table,
@@ -62,8 +62,6 @@ Architektura FlashVSR przełamuje to ograniczenie poprzez sprowadzenie procesu d
       align: left + top,
       stroke: 0.5pt + luma(150),
       fill: (col, row) => if row == 0 { luma(230) } else { none },
-      // stroke: none,
-      // inset: (x: 4pt, y: 5pt),
 
       table.header(
         [Klasa metod \ (reprezentant)],
@@ -116,11 +114,11 @@ Architektura FlashVSR przełamuje to ograniczenie poprzez sprowadzenie procesu d
 === Ograniczenia modelu FlashVSR
 <ograniczenia-modelu-flashvsr>
 
-Oryginalne wdrożenie tego modelu wykazuje ogromne zapotrzebowanie na pamięć karty graficznej. Wyniki wydajnościowe zaprezentowane przez autorów architektury uzyskano na akceleratorze NVIDIA A100 z 80 GB VRAM. W domyślnej precyzji FP16/BF16 rozmiar wag modelu w połączeniu z buforem KV-cache oraz alokacją pamięci na aktywacje warstw samouwagi sprawia, że próba uruchomienia bazowej wersji FlashVSR na powszechnie dostępnych, konsumenckich kartach graficznych (np. z 10 GB VRAM) kończy się przepełnieniem pamięci.
+Oryginalne wdrożenie tego modelu wykazuje ogromne zapotrzebowanie na pamięć karty graficznej. Wyniki wydajnościowe zaprezentowane przez autorów architektury uzyskano na akceleratorze NVIDIA A100 z 80 GB VRAM. W domyślnej precyzji FP16/BF16 rozmiar wag modelu w połączeniu z buforem KV-cache oraz alokacją pamięci na aktywacje warstw samouwagi sprawia, że próba uruchomienia bazowej wersji _FlashVSR_ na powszechnie dostępnych, konsumenckich kartach graficznych (np. z 10 GB VRAM) kończy się przepełnieniem pamięci.
 
 === Sformułowanie problemu i celu pracy
 <sformułowanie-problemu-i-celu-pracy>
 
-Głównym problemem jest więc brak możliwości bezpośredniego uruchomienia jednokrokowego modelu FlashVSR na sprzęcie o ograniczonych zasobach.
+Głównym problemem jest więc brak możliwości bezpośredniego uruchomienia jednokrokowego modelu _FlashVSR_ na sprzęcie o ograniczonych zasobach.
 
-Celem niniejszej pracy jest zaprojektowanie, zrealizowanie i przeanalizowanie zoptymalizowanego potoku inferencji dla modelu FlashVSR. Wykorzystano w nim techniki takie jak kwantyzacja wag i aktywacji, zoptymalizowane mechanizmy uwagi oraz podział przestrzenno-czasowy, aby umożliwić stabilną i wydajną pracę modelu w reżimie 10 GB VRAM przy minimalnej utracie jakości wyjściowego obrazu.
+Celem niniejszej pracy jest zaprojektowanie, zrealizowanie i przeanalizowanie zoptymalizowanego potoku inferencji dla modelu _FlashVSR_. Wykorzystano w nim techniki takie jak kwantyzacja wag i aktywacji, zoptymalizowane mechanizmy uwagi oraz podział przestrzenno-czasowy, aby umożliwić stabilną i wydajną pracę modelu w reżimie 10 GB VRAM przy minimalnej utracie jakości wyjściowego obrazu.
