@@ -1,8 +1,10 @@
 #import "../utils.typ": flex-caption, silentheading, todo
 
 = Wstęp
+<wstęp>
 
 == Motywacja i sformułowanie problemu
+<motywacja-i-sformułowanie-problemu>
 
 Technologia superrozdzielczości wideo (ang. _Video Super-Resolution_, VSR) służy do rekonstrukcji sekwencji o wysokiej rozdzielczości na podstawie jej zdegradowanego odpowiednika. Wykorzystuje się ją w wielu praktycznych zastosowaniach, począwszy od rekonstrukcji archiwalnych nagrań i skalowania skompresowanych mediów na platformach streamingowych, aż po poprawę jakości nagrań z monitoringu i badań medycznych.
 
@@ -13,6 +15,7 @@ Jednokrokowe modele uzyskiwane w wyniku destylacji wiedzy są częściową odpow
 Stwarza to istotną barierę, ponieważ dostępne modele, takie jak _FlashVSR_, zakładają wykorzystanie akceleratorów klasy serwerowej. Autorzy tego modelu wskazują, że szczytowe zużycie pamięci osiąga 11,13 GB przy 101 klatkach o rozdzielczości wyjściowej $768 times 1408$ @Zhuang2025FlashVSRTR. Oznacza to, że sekwencja wejściowa miała wymiary zaledwie $192 times 352$ przy powiększeniu x4, czyli parametry znacząco odbiegające od rozdzielczości typowych nagrań. Konsumenckie karty graficzne oferują zazwyczaj od 8 do 12 GB pamięci VRAM; sprzęt referencyjny przyjęty w pracy, czyli NVIDIA RTX 3080, zapewnia 10 GB. Zapotrzebowanie na pamięć przekracza dostępny budżet nawet w tak korzystnym scenariuszu, a deficyt ten rośnie wraz ze wzrostem rozdzielczości wejściowej. Rodzi to pytanie, czy model tej klasy da się uruchomić w budżecie 10 GB VRAM i jakimi kompromisami w zakresie jakości rekonstrukcji oraz czasu inferencji się to wiąże.
 
 == Cel i zakres pracy
+<cel-i-zakres-pracy>
 
 Celem pracy jest umożliwienie inferencji jednokrokowego, dyfuzyjnego modelu superrozdzielczości wideo na karcie graficznej wyposażonej w 10 GB pamięci VRAM, przy zachowaniu akceptowalnych jakości rekonstrukcji i czasu przetwarzania. Jako model bazowy przyjęto _FlashVSR_ @Zhuang2025FlashVSRTR.
 
@@ -22,5 +25,6 @@ Zakres pracy ogranicza się do fazy inferencji. Nie przeprowadzono treningu ani 
 
 
 == Struktura pracy
+<struktura-pracy>
 
 #todo[Opisać strukturę pracy.]

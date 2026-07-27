@@ -1,12 +1,15 @@
 #import "../utils.typ": flex-caption, silentheading, todo
 
 = Podstawy teoretyczne
+<podstawy-teoretyczne>
 
 == Superrozdzielczość wideo
+<superrozdzielczość-wideo>
 
 Superrozdzielczość wideo to zadanie z zakresu widzenia komputerowego, którego celem jest generowanie materiałów wideo o wysokiej rozdzielczości (ang. _high-resolution_, HR) i ulepszonej jakości wizualnej na podstawie wejściowych sekwencji o niskiej rozdzielczości (ang. _low-resolution_, LR). Podstawową różnicą między VSR a superrozdzielczością obrazów (ang. _Single Image Super-Resolution_, SISR) jest obecność w wideo dodatkowego wymiaru czasowego. SISR bazuje wyłącznie na informacji przestrzennej z pojedynczego obrazu, natomiast VSR wykorzystuje dodatkowo silne korelacje między kolejnymi klatkami. Bezpośrednie zastosowanie metod SISR do poszczególnych klatek wideo nie pozwala na uchwycenie tych zależności czasowych @Baniya_2024.
 
 === Sformułowanie problemu
+<sformułowanie-problemu>
 
 Problem superrozdzielczości wideo jest zdefiniowany jako zadanie odwrotne, w którym dążymy do odzyskania sekwencji HR na podstawie obserwowanej sekwencji LR. Proces powstawania materiału LR jest zazwyczaj modelowany jako złożenie degradacji fizycznych i cyfrowych.
 
@@ -27,10 +30,12 @@ $<vsr_eq>
 Powyższe klasyczne sformułowania zakładają uproszczone, deterministyczne zniekształcenia, które nie odzwierciedlają warunków rzeczywistych. W praktyce proces utraty jakości wymaga zaawansowanych modeli degradacji, które łączą losowe rozmycia, szum oraz zmianę rozmiaru i artefakty kompresji @chan2021investigatingtradeoffsrealworldvideo.
 
 === Spójność czasowa
+<spójność-czasowa>
 
 Spójność czasowa w kontekście superrozdzielczości wideo polega na utrzymaniu ciągłości, płynności oraz braku zauważalnych zniekształceń i migotania między kolejnymi klatkami wygenerowanej sekwencji HR @Baniya_2024 @liu2022videosuperresolutionbased. Bezpośrednie zastosowanie metod SISR do poszczególnych klatek pomija zależności czasowe, co prowadzi do niestabilności detali i artefaktów wizualnych. W modelach głębokiego uczenia spójność tę realizuje się poprzez techniki wyrównywania klatek i kompensacji ruchu (ang. _motion estimation and motion compensation_, MEMC), konwolucje 3D, moduły rekurencyjne (RNN) propagujące kontekst czasowy oraz mechanizmy uwagi @Baniya_2024. Choć metody te poprawiają jakość generowanych sekwencji, analiza wielu klatek znacznie zwiększa złożoność obliczeniową i pamięciową, a w warunkach rzeczywistych stwarza ryzyko akumulacji i przenoszenia błędów między klatkami @chan2021investigatingtradeoffsrealworldvideo.
 
 == Modele dyfuzyjne
+<modele-dyfuzyjne>
 
 Modele dyfuzyjne (ang. _Denoising Diffusion Probabilistic Models_, DDPMs) to klasa modeli generatywnych wykorzystująca dwa podstawowe łańcuchy Markova: w przód (ang. _forward chain_), który stopniowo zniekształca dane poprzez dodawanie szumu, oraz w tył (ang. _reverse chain_), przekształcający szum z powrotem w ustrukturyzowane dane @yang2025diffusionmodelscomprehensivesurvey.
 
@@ -49,6 +54,7 @@ gdzie sieć estymuje wartość średnią oraz wariancję w celu odtworzenia obra
 W klasycznych modelach dyfuzyjnych zmienne pośrednie mają ten sam wymiar co dane wejściowe. Aby zniwelować wynikające z tego ograniczenia obliczeniowe, stosuje się dyfuzję w przestrzeni ukrytej (ang. _Latent Diffusion Models_, LDMs) @yang2025diffusionmodelscomprehensivesurvey. Podejście to opiera się na hipotezie rozmaitości (ang. _manifold hypothesis_), zakładającej, że naturalne sygnały leżą na podprzestrzeniach o znacznie niższym wymiarze. Modele LDM wykorzystują autoenkoder do skompresowania wysokowymiarowych danych w ciągłą reprezentację ukrytą (ang. _latent space_). Właściwy proces dyfuzji odbywa się wyłącznie w tej skompresowanej przestrzeni, a dekoder mapuje odszumiony wektor ukryty z powrotem do przestrzeni pikseli, co znacząco redukuje zapotrzebowanie na pamięć i moc obliczeniową @yang2025diffusionmodelscomprehensivesurvey.
 
 == Transformer wizyjny
+<transformer-wizyjny>
 
 Architektura Transformer znalazła skuteczne zastosowanie również w wizji komputerowej jako Transformer wizyjny (ang. _Vision Transformer_, ViT) @dosovitskiy2021imageworth16x16words. Zamiast wykorzystywać filtry splotowe, ViT dzieli obraz na łatki (*patches*) i traktuje je analogicznie do tokenów słów w modelach NLP.
 
@@ -57,6 +63,7 @@ Dane wejściowe $x in RR^(H times W times C)$ są dzielone na sekwencję łat $x
 Adaptacja ViT do superrozdzielczości wideo polega na rozszerzeniu podziału na płaty do przestrzeni trójwymiarowej, co umożliwia jednoczesne modelowanie relacji przestrzennych i czasowych. Poprzez zastosowanie mechanizmu samouwagi (ang. _Self-Attention_), modele VSR dynamicznie szacują istotność różnych klatek wewnątrz analizowanego okna czasowego, co pozwala wyselekcjonować najbardziej informatywne fragmenty z sąsiednich klatek i wykorzystać je do precyzyjnej rekonstrukcji detali @Baniya_2024.
 
 == Transformer dyfuzyjny
+<transformer-dyfuzyjny>
 
 Połączenie zalet modeli dyfuzyjnych w przestrzeni ukrytej (LDM) oraz skalowalności architektury ViT doprowadziło do powstania transformerów dyfuzyjnych (ang. _Diffusion Transformer_, DiT) @peebles2023scalablediffusionmodelstransformers. W przeciwieństwie do klasycznych modeli LDM, które wykorzystują splotowe sieci typu U-Net jako kręgosłup (ang. _backbone_) procesu odszumiania, architektura DiT zastępuje je enkoderem opartym na Transformerze.
 
@@ -65,6 +72,7 @@ Przetwarzanie w DiT rozpoczyna się od skompresowania obrazu do przestrzeni ukry
 Głównym wyzwaniem w adaptacji architektur DiT do zadań superrozdzielczości wideo jest potrzeba uwarunkowania procesu generatywnego nagraniem LR. W modelach VSR opartych na DiT (takich jak _FlashVSR_) sekwencja HR nie jest generowana z czystego szumu; zamiast tego do sterowania odtwarzaniem detali wykorzystuje się wideo LR. Wbudowywanie warunku realizuje się m.in. poprzez rzutowanie klatek LR za pomocą lekkiej warstwy konwolucyjnej (_Proj-In_) i dodanie tak uzyskanych cech do tokenów jako osadzenia warunkujące @Zhuang2025FlashVSRTR.
 
 == Optymalizacje mechanizmu uwagi
+<optymalizacje-mechanizmu-uwagi>
 
 Standardowy mechanizm uwagi oparty na iloczynie skalarnym ze skalowaniem (_Scaled Dot-Product Attention_) stanowi fundament architektury Transformer. Odwzorowuje on zapytania ($Q$), klucze ($K$) oraz wartości ($V$) na wektor wyjściowy zgodnie z zależnością @vaswani2023attentionneed:
 
@@ -73,31 +81,37 @@ $ "Attention"(Q, K, V) = "softmax"((Q K^T) / sqrt(d_k)) V $
 gdzie $d_k$ oznacza wymiarowość kluczy, a dzielenie przez $sqrt(d_k)$ zapobiega zanikaniu gradientów dla dużych wartości iloczynu skalarnego. Mimo że operacja ta opiera się na wydajnych mnożeniach macierzowych, charakteryzuje się kwadratową złożonością obliczeniową i pamięciową $O(N^2)$ względem długości sekwencji $N$. Wynika to z konieczności bezpośredniego zapisywania pełnej, pośredniej macierzy uwagi w pamięci karty graficznej @dao2022flashattentionfastmemoryefficientexact.
 
 === FlashAttention
+<flashattention>
 
 _FlashAttention_ @dao2022flashattentionfastmemoryefficientexact niweluje ograniczenia pamięciowe poprzez algorytm optymalizujący przepływ danych, nie wprowadzając przy tym żadnych aproksymacji. Zamiast zapisywać pośrednią macierz uwagi w wolniejszej pamięci HBM (ang. _High Bandwidth Memory_), algorytm stosuje technikę kafelkowania (ang. _tiling_). Bloki macierzy $Q$, $K$ i $V$ są ładowane do znacznie szybszej pamięci podręcznej SRAM na chipie GPU, gdzie stopniowo obliczana jest redukcja _softmax_, a do pamięci HBM zapisywany jest jedynie ostateczny wynik.
 
 === SageAttention
+<sageattention>
 
 _SageAttention_ @zhang2025sageattentionaccurate8bitattention przyspiesza inferencję, wykorzystując kwantyzację. Ponieważ operacje mnożenia macierzy w formacie INT8 na nowoczesnych jednostkach GPU są znacznie szybsze niż w formatach FP16 czy FP8, metoda kwantyzuje macierze $Q$ i $K$ do formatu INT8, pozostawiając macierze $P$ (macierz wag uwagi po operacji _softmax_) oraz $V$ w formacie FP16. Aby zapobiec utracie dokładności wynikającej z ograniczonego zakresu liczbowego, wprowadzono technikę wygładzania usuwającą wartości odstające z macierzy $K$.
 
 Wersja _SageAttention2_ @zhang2025sageattention2efficientattentionthorough wprowadza jeszcze szybszą kwantyzację INT4 dla $Q$ i $K$ oraz kwantyzację FP8 dla $P$ i $V$, łącząc to z kompleksowym wygładzaniem wartości odstających dla obu macierzy $Q$ i $K$.
 
 === Block Sparse Attention: Odrzucanie redundantnych interakcji
+<block-sparse-attention-odrzucanie-redundantnych-interakcji>
 
 _Block Sparse Attention_ to metoda aproksymacyjna redukująca złożoność poprzez odrzucanie nadmiarowych obliczeń. Zamiast pełnych interakcji uwaga ograniczana jest wyłącznie do wybranych, niezerowych bloków.
 
 Przykładowo, w modelach takich jak _FlashVSR_, algorytm najpierw wyznacza przybliżoną mapę uwagi poprzez uśrednianie (ang. _average pooling_) cech kluczy i wartości w celu uzyskania reprezentacji blokowych. Następnie wybierana jest grupa $k$ najbardziej istotnych par bloków (ang. _top-k_), a pełny mechanizm uwagi aplikowany jest wyłącznie do tych obszarów. Integracja tej metody z _FlashAttention_ pozwala obniżyć złożoność operacji wejścia/wyjścia proporcjonalnie do współczynnika rzadkości @dao2022flashattentionfastmemoryefficientexact.
 
 === SpargeAttention
+<spargeattention>
 
 _SpargeAttention_ @zhang2025spargeattentionaccuratetrainingfreesparse to uniwersalna metoda niewymagająca ponownego trenowania, która łączy cechy uwagi rzadkiej oraz kwantyzacji w celu przyspieszenia predykcji bez utraty jakości modelu. Działając w oparciu o szkielet _SageAttention_, wykorzystuje dwuetapowy filtr do pomijania zbędnych mnożeń macierzowych. W pierwszym etapie bloki $Q$ oraz $K$ wykazujące wysokie podobieństwo są kompresowane do pojedynczych tokenów, co pozwala na szybsze i bardziej precyzyjne przewidywanie oraz maskowanie rzadkich obszarów na mapie uwagi. W drugim etapie algorytm _sparse warp online softmax_ pomija obliczanie iloczynu $P V$, jeśli lokalna wartość maksymalna w danym bloku jest znacząco mniejsza od wartości maksymalnej w skali globalnej, skutecznie ignorując mało znaczące wartości.
 
 
 == Kwantyzacja całkowitoliczbowa
+<kwantyzacja-całkowitoliczbowa>
 
 Kwantyzacja całkowitoliczbowa (ang. _Integer Quantization_) polega na konwersji wartości o wysokiej precyzji (np. FP32) na nisko-precyzyjne formaty całkowitoliczbowe (np. INT8), co przyspiesza inferencję poprzez wykorzystanie dedykowanych jednostek obliczeniowych i redukcję zapotrzebowania na pamięć. Proces ten opiera się na operacji kwantyzacji, czyli mapowaniu wartości rzeczywistych na całkowite, oraz dekwantyzacji, odpowiedzialnej za odtworzenie wartości przybliżonych @wu2020integerquantizationdeeplearning.
 
 === Mechanizmy mapowania
+<mechanizmy-mapowania>
 
 Jednostajna kwantyzacja przekształca rzeczywiste wartości $x in [beta, alpha]$ na $b$-bitowe reprezentacje całkowitoliczbowe $x_q$. Przekształcenie to opiera się na transformacji afinicznej (ang. _affine quantization_) $f(x) = s dot x + z$ lub jej szczególnym przypadku - transformacji skalowanej (ang. _scale quantization_) $f(x) = s dot x$ @wu2020integerquantizationdeeplearning.
 
@@ -108,10 +122,12 @@ Kwantyzacja skalowana (w wariancie symetrycznym) zakłada symetrię przedziału 
 $ x_q = text("clip")(text("round")(s dot x), -2^(b-1)+1, 2^(b-1)-1), quad hat(x) = 1/s x_q $
 
 === Kwantyzacja wag (Weights)
+<kwantyzacja-wag-weights>
 
 Ponieważ wagi podczas inferencji są statyczne, wyznaczanie ich parametrów kwantyzacji odbywa się w trybie offline. W tym celu stosuje się kwantyzację kanałową (ang. _per-channel_), która zachowuje dokładność modelu przy zróżnicowanych rozkładach cech pomiędzy kanałami. Zakres wartości $alpha$ i $beta$ określa się zazwyczaj za pomocą kalibracji bazującej na maksymalnej wartości (_max calibration_), przy czym zdecydowanie preferuje się wariant symetryczny, ponieważ brak współczynnika $z$ eliminuje dodatkowy narzut obliczeniowy podczas mnożenia macierzy @wu2020integerquantizationdeeplearning.
 
 === Kwantyzacja aktywacji
+<kwantyzacja-aktywacji>
 
 Dynamiczna natura aktywacji wymusza odmienne podejście do wyznaczania zakresów mapowania. Aby umożliwić wydajne mnożenie macierzy, aktywacje kwantyzuje się na poziomie całego tensora (_per-tensor_). Ze względu na częstą obecność wartości odstających, zamiast kalibracji maksymalnej stosuje się kalibrację entropijną lub percentylową, co zapobiega spychaniu większości poprawnych wartości do zbyt wąskiego przedziału bitowego.
 
@@ -119,10 +135,12 @@ Połączenie symetrycznej kwantyzacji _per-channel_ dla wag oraz kwantyzacji _pe
 
 
 == Metryki oceny jakości obrazu i wideo
+<metryki-oceny-jakości-obrazu-i-wideo>
 
 W celu przeprowadzenia kompleksowej ewaluacji jakości wygenerowanych sekwencji wideo zastosowano zestaw siedmiu metryk badawczych, obejmujący zarówno tradycyjne wskaźniki pełnoreferencyjne (ang. _Full-Reference_), jak i zaawansowane metryki percepcyjne oraz bezreferencyjne (ang. _No-Reference_).
 
 === Metryki pełnoreferencyjne
+<metryki-pełnoreferencyjne>
 
 Metryki pełnoreferencyjne wymagają bezpośredniego porównania wygenerowanej klatki lub sekwencji ze źródłowym materiałem referencyjnym (ang. _Ground Truth_, GT).
 
@@ -133,6 +151,7 @@ Wskaźnik podobieństwa strukturalnego (SSIM, ang. _Structural Similarity Index 
 Głęboka percepcyjna miara podobieństwa fragmentów obrazu (LPIPS, ang. _Learned Perceptual Image Patch Similarity_) @lpips mierzy percepcyjną odmienność wizualną z wykorzystaniem cech wysokiego poziomu, wyekstrahowanych z głębokiej sieci neuronowej (np. VGG-16). Dzięki wykorzystaniu reprezentacji wyuczonych na dużych zbiorach danych, LPIPS odzwierciedla subiektywne oceny ludzkie w stopniu znacznie wyższym niż klasyczne miary pikselowe @Baniya_2024.
 
 === Metryki bezreferencyjne
+<metryki-bezreferencyjne>
 
 Metryki bezreferencyjne dokonują oceny jakości lub estetyki obrazu oraz wideo bez konieczności dostępu do materiału wzorcowego.
 
