@@ -83,11 +83,11 @@ Architektura FlashVSR przełamuje to ograniczenie poprzez sprowadzenie procesu d
   caption: [Jakościowe zestawienie właściwości głównych klas metod VSR.],
 ) <tbl-vsr-comparison>
 
-=== Bariery wdrożeniowe i ograniczenia modelu FlashVSR
+=== Ograniczenia modelu FlashVSR
 
 Oryginalne wdrożenie tego modelu wykazuje ogromne zapotrzebowanie na pamięć karty graficznej. Wyniki wydajnościowe zaprezentowane przez autorów architektury uzyskano na akceleratorze NVIDIA A100 z 80 GB VRAM. W domyślnej precyzji FP16/BF16 rozmiar wag modelu w połączeniu z buforem KV-cache oraz alokacją pamięci na aktywacje warstw samouwagi sprawia, że próba uruchomienia bazowej wersji FlashVSR na powszechnie dostępnych, konsumenckich kartach graficznych (np. z 10 GB VRAM) kończy się przepełnieniem pamięci.
 
-=== Sformułowanie problemu inżynierskiego i celu pracy
+=== Sformułowanie problemu i celu pracy
 
 Głównym problemem jest więc brak możliwości bezpośredniego uruchomienia jednokrokowego modelu FlashVSR na sprzęcie o ograniczonych zasobach.
 
