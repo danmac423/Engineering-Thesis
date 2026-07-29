@@ -19,37 +19,21 @@ Parametry sterujące stopniem rzadkości (udział wybieranych par bloków, dług
 <kwantyzacja>
 Przyjęto format INT8. Formatu FP8 nie rozważano, ponieważ architektura Ampere go nie wspiera. Odrzucono również formaty czterobitowe, takie jak NF4 czy GGUF, ponieważ są rozwijane przede wszystkim pod kątem modeli językowych. Dla INT8 architektura Ampere udostępnia dedykowane jednostki tensorowe, a literatura raportuje dokładność zbliżoną do modelu bazowego przy odpowiednim doborze mechanizmu mapowania @wu2020integerquantizationdeeplearning.
 
-Do realizacji wybrano bibliotekę _torchao_ @torchao2024, która działa przez podmianę tensorów wag na wyspecjalizowane podtypy, nie wymagając modyfikacji definicji modelu ani eksportu do reprezentacji pośredniej. Kwantyzację można więc włączyć jako opcjonalny krok inicjalizacji potoku.
+Do realizacji wybrano bibliotekę torchao, która działa przez podmianę tensorów wag na wyspecjalizowane podtypy, nie wymagając modyfikacji definicji modelu ani eksportu do reprezentacji pośredniej. Kwantyzację można więc włączyć jako opcjonalny krok inicjalizacji potoku.
 
 Kwantyzacji poddano wyłącznie transformer dyfuzyjny, odpowiadający za większość parametrów modelu i wywoływany dla każdego fragmentu. Lekkiego dekodera warunkowego nie objęto zakresem pracy.
 
 == Ograniczenie rozmiaru przetwarzanego fragmentu
 <ograniczenie-rozmiaru-przetwarzanego-fragmentu>
-Zapotrzebowanie na pamięć w obrębie pojedynczego wywołania modelu zależy
-od liczby tokenów czasoprzestrzennych, a więc od rozdzielczości
-przetwarzanego fragmentu. Podział klatki na kafle przetwarzane kolejno
-sprawia, że szczytowe zużycie pamięci przestaje zależeć od
-rozdzielczości nagrania wejściowego, a zaczyna zależeć wyłącznie od
-rozmiaru kafla.
+Zapotrzebowanie na pamięć w obrębie pojedynczego wywołania modelu zależy od liczby tokenów czasoprzestrzennych, a więc od rozdzielczości przetwarzanego fragmentu. Podział klatki na kafle przetwarzane kolejno sprawia, że szczytowe zużycie pamięci przestaje zależeć od rozdzielczości nagrania wejściowego, a zaczyna zależeć wyłącznie od rozmiaru kafla.
 
-Kosztem jest redundancja obliczeń w obszarze zakładki oraz ryzyko
-widocznych nieciągłości na granicach kafli, rekonstruowanych niezależnie
-i bez dostępu do kontekstu sąsiadów. Przyjęto zatem przetwarzanie z
-zakładką i łączenie kafli maską o liniowo narastających wagach we wspólnym obszarze.
+Kosztem jest redundancja obliczeń w obszarze zakładki oraz ryzyko widocznych nieciągłości na granicach kafli, rekonstruowanych niezależnie i bez dostępu do kontekstu sąsiadów. Przyjęto zatem przetwarzanie z zakładką i łączenie kafli maską o liniowo narastających wagach we wspólnym obszarze.
 
-Analogiczny mechanizm zastosowano w wymiarze czasowym. _FlashVSR_
-przetwarza nagranie strumieniowo, a pamięć podręczna kluczy i wartości z
-oknem przesuwnym ogranicza narastanie stanu, jednak bufory wejściowe i
-wyjściowe długich nagrań pozostają kosztowne pamięciowo. Sekwencję
-dzielono więc na segmenty o ustalonej długości, łączone z zakładką przez
-liniowe mieszanie klatek.
+Analogiczny mechanizm zastosowano w wymiarze czasowym. _FlashVSR_ przetwarza nagranie strumieniowo, a pamięć podręczna kluczy i wartości z oknem przesuwnym ogranicza narastanie stanu, jednak bufory wejściowe i wyjściowe długich nagrań pozostają kosztowne pamięciowo. Sekwencję dzielono więc na segmenty o ustalonej długości, łączone z zakładką przez liniowe mieszanie klatek.
 
 == Podsumowanie
 <podsumowanie>
-Wybrane techniki zestawiono w @tab:zestawienie-technik[tabeli]. Każda jest przełączalna w czasie
-działania, co pozwala badać zarówno pojedyncze rozwiązania, jak i ich
-kombinacje w jednolitym środowisku pomiarowym.
-
+Wybrane techniki zestawiono w @tab:zestawienie-technik[tabeli]. Każda jest przełączalna w czasie działania, co pozwala badać zarówno pojedyncze rozwiązania, jak i ich kombinacje w jednolitym środowisku pomiarowym.
 
 #figure(
   kind: table,
