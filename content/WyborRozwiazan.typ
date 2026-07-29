@@ -17,7 +17,7 @@ Parametry sterujące stopniem rzadkości (udział wybieranych par bloków, dług
 
 == Kwantyzacja
 <kwantyzacja>
-Przyjęto format INT8. Formatu FP8 nie rozważano, ponieważ architektura Ampere go nie wspiera. Odrzucono również formaty czterobitowe, takie jak NF4 czy GGUF. Rozwijane są one przede wszystkim pod kątem modeli językowych. Zachowanie jakości wymaga przy nich zwykle kalibracji lub dostrajania, co wykracza poza zakres pracy. Dla INT8 architektura Ampere udostępnia dedykowane jednostki tensorowe, a literatura raportuje dokładność zbliżoną do modelu bazowego przy odpowiednim doborze mechanizmu mapowania @wu2020integerquantizationdeeplearning.
+Przyjęto format INT8. Formatu FP8 nie rozważano, ponieważ architektura Ampere go nie wspiera. Odrzucono również formaty czterobitowe, takie jak NF4 czy GGUF, ponieważ są rozwijane przede wszystkim pod kątem modeli językowych. Dla INT8 architektura Ampere udostępnia dedykowane jednostki tensorowe, a literatura raportuje dokładność zbliżoną do modelu bazowego przy odpowiednim doborze mechanizmu mapowania @wu2020integerquantizationdeeplearning.
 
 Do realizacji wybrano bibliotekę _torchao_ @torchao2024, która działa przez podmianę tensorów wag na wyspecjalizowane podtypy, nie wymagając modyfikacji definicji modelu ani eksportu do reprezentacji pośredniej. Kwantyzację można więc włączyć jako opcjonalny krok inicjalizacji potoku.
 
