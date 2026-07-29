@@ -46,4 +46,4 @@ Usługa sieciowa przyjmuje zlecenia przetwarzania wraz z pełną konfiguracją i
 
 == Jakość kodu
 <jakość-kodu>
-Moduły pomocnicze odpowiedzialne za wyznaczanie podziału na kafle, generowanie masek mieszania oraz obliczanie wymaganych wymiarów danych objęto testami jednostkowymi z wykorzystaniem biblioteki `pytest`. Są to funkcje obliczeniowe, których poprawność decyduje o braku artefaktów w materiale wyjściowym, a jednocześnie dające się testować bez dostępu do karty graficznej. Spójność stylu kodu zapewnia narzędzie `ruff`, uruchamiane w trybie kontroli i formatowania.
+Moduły pomocnicze odpowiedzialne za wyznaczanie podziału na kafle, generowanie masek mieszania oraz obliczanie wymaganych wymiarów danych objęto testami jednostkowymi z wykorzystaniem biblioteki `pytest`. Są to funkcje obliczeniowe, których poprawność decyduje o braku artefaktów w materiale wyjściowym, a jednocześnie dające się testować bez dostępu do karty graficznej. Statyczną analizę kodu i jego formatowanie realizuje narzędzie `ruff`.
