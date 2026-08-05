@@ -2,13 +2,13 @@
 
 = Implementacja
 <implementacja>
-Prace implementacyjne objęły przekształcenie referencyjnych skryptów inferencyjnych w pakiet o sterowalnej konfiguracji oraz dodanie mechanizmów redukujących zapotrzebowanie na pamięć i czas: wymiennych wariantów mechanizmu uwagi obejmujących jądra bibliotek _SageAttention_ i _SpargeAttention_, kwantyzacji całkowitoliczbowej transformera dyfuzyjnego oraz kafelkowania przestrzennego i czasowego. Przedstawiono je kolejno wraz z narzędziami pomiarowymi zbudowanymi na potrzeby badań. Elementy zaczerpnięte z implementacji referencyjnej zaznaczono w tekście.
+Prace implementacyjne objęły przekształcenie referencyjnych skryptów inferencyjnych w pakiet o sterowalnej konfiguracji oraz dodanie mechanizmów redukujących zapotrzebowanie na pamięć i czas: wymiennych wariantów mechanizmu uwagi obejmujących jądra bibliotek _SageAttention_ i _SpargeAttention_, kwantyzacji całkowitoliczbowej transformera dyfuzyjnego oraz kafelkowania przestrzennego i czasowego. Elementy zaczerpnięte z implementacji referencyjnej zaznaczono w tekście.
 
 == Wymienne warianty mechanizmu uwagi
 <wymienne-warianty-mechanizmu-uwagi>
 W implementacji referencyjnej wybór jądra obliczeniowego nie podlegał konfiguracji. Realizował go łańcuch warunków sterowany obecnością maski blokowej oraz dostępnością pakietów w środowisku, w którym _SageAttention_ zajmowało odległą pozycję, osiąganą wyłącznie przy braku zainstalowanego _FlashAttention_. Pakiet ten nie był przy tym wymieniony wśród zadeklarowanych zależności, więc ścieżka ta pozostawała w praktyce nieosiągalna.
 
-Łańcuch ten zastąpiono jawnym wyborem sterowanym dwoma niezależnymi parametrami, przekazywanymi przy budowie modelu i propagowanymi do wszystkich bloków transformera. Podział ten wynika z trybu pracy mechanizmu uwagi. Może on działać ze blokową (łączącą najistotniejsze bloki tokenów z lokalnym oknem czasowym) albo w trybie standardowym, bez maskowania. Ścieżkę z maską obsługuje parametr `mask_attn_mode`, wybierający między jądrem `block_sparse_attn` a jądrem `block_sparse_sage2_attn_cuda` z biblioteki _SpargeAttention_. Ścieżkę bez maski blokowej obsługuje parametr `attn_mode`, wybierający między funkcją `sageattn` a domyślną implementacją uwagi dokładnej z biblioteki PyTorch.
+Łańcuch ten zastąpiono jawnym wyborem sterowanym dwoma niezależnymi parametrami, przekazywanymi przy budowie modelu i propagowanymi do wszystkich bloków transformera. Podział ten wynika z trybu pracy mechanizmu uwagi. Podział ten wynika z trybu pracy mechanizmu uwagi. Może on działać z maską blokową, łączącą najistotniejsze pary bloków z lokalnym oknem przestrzennym, albo w trybie standardowym, bez maskowania. Ścieżkę z maską obsługuje parametr `mask_attn_mode`, wybierający między jądrem `block_sparse_attn` a jądrem `block_sparse_sage2_attn_cuda` z biblioteki _SpargeAttention_. Ścieżkę bez maski blokowej obsługuje parametr `attn_mode`, wybierający między funkcją `sageattn` a implementacją `flash_attention` z biblioteki PyTorch.
 
 == Integracja kwantyzacji
 <integracja-kwantyzacji>
@@ -25,8 +25,6 @@ Kafelkowanie jest wykonalne dzięki własności odziedziczonej po implementacji 
 Podział klatki na kafle realizuje funkcja zwracająca listę współrzędnych obszarów wejściowych, wyznaczanych z zadanego rozmiaru kafla i szerokości zakładki. Gdy obszar wykracza poza wymiary klatki, jego brzeg jest przycinany do krawędzi, a brzeg przeciwny cofany tak, aby zachować zadany rozmiar. Zapobiega to przetwarzaniu kafli mniejszych od zadanego rozmiaru, kosztem zwiększonej zakładki przy krawędziach obrazu. Jeżeli natomiast zadany rozmiar przekracza wymiar klatki, cofnięcie nie jest możliwe i kafel zostaje zredukowany do rozmiaru obrazu.
 
 Wyniki poszczególnych kafli łączone są przez akumulację na dwóch płótnach: na pierwszym sumowane są kafle przemnożone przez maskę mieszania, na drugim same wagi maski. Iloraz obu płócien daje średnią ważoną w obszarach nakładania. Maska nadaje pasom o szerokości zakładki przy każdej krawędzi wagi narastające liniowo ku wnętrzu kafla. Rozwiązanie to nie wymaga rozróżniania kafli brzegowych i wewnętrznych ani znajomości położenia sąsiadów, a przy tym poprawnie obsługuje zwiększoną zakładkę przy krawędziach obrazu.
-
-Oba płótna alokowane są w pamięci operacyjnej, a po przetworzeniu każdego kafla zwalniane są tensory pośrednie i czyszczona pamięć podręczna alokatora. Dzięki temu na karcie znajdują się jednocześnie wyłącznie wagi modelu, pamięć podręczna kluczy i wartości oraz aktywacje pojedynczego kafla.
 
 == Kafelkowanie czasowe
 <kafelkowanie-czasowe>
