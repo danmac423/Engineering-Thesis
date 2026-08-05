@@ -7,9 +7,9 @@ Analiza z @przeglad-istniejacych-rozwiazan[rozdziału] wykazała, że przeszkod�
 
 == Mechanizm uwagi
 <mechanizm-uwagi>
-Blokowo-rzadki mechanizm uwagi stosowany w _FlashVSR_ składa się z dwóch koncepcyjnie niezależnych elementów: jądra realizującego uwagę gęstą w obrębie okien lokalnych oraz metody selekcji istotnych par bloków w uwadze międzyokiennej. Ich rozdzielenie w warstwie Umożliwiło zbadać wpływ każdego z nich.
+Blokowo-rzadki mechanizm uwagi stosowany w _FlashVSR_ składa się z dwóch koncepcyjnie niezależnych elementów: jądra realizującego uwagę gęstą w wywołaniach bez maski blokowej oraz jądra realizującego uwagę rzadką, ograniczoną maską wyznaczoną na podstawie selekcji istotnych par bloków i okien lokalnych. Rozdzielenie ich w warstwie konfiguracji pozwoliło zbadać wpływ każdego z nich.
 
-Jako referencyjne metodę dla gęstej uwagi przyjęto _FlashAttention_ @dao2022flashattentionfastmemoryefficientexact, stosowaną w oryginalnej implementacji, w której redukcja zużycia pamięci wynika wyłącznie z optymalizacji przepływu danych. Wariantem alternatywnym jest _SageAttention_ @zhang2025sageattentionaccurate8bitattention, który nie wymaga ponownego trenowania, działa na poziomie pojedynczego wywołania mechanizmu uwagi, a wykorzystywany przez nią format INT8 jest wspierany przez architekturę Ampere.
+Jako referencyjną metodę dla gęstej uwagi przyjęto _FlashAttention_ @dao2022flashattentionfastmemoryefficientexact, stosowaną w oryginalnej implementacji, w której redukcja zużycia pamięci wynika wyłącznie z optymalizacji przepływu danych. Wariantem alternatywnym jest _SageAttention_ @zhang2025sageattentionaccurate8bitattention, który nie wymaga ponownego trenowania, działa na poziomie pojedynczego wywołania mechanizmu uwagi, a wykorzystywany przez nią format INT8 jest wspierany przez architekturę Ampere.
 
 Wariantem odniesienia dla selekcji rzadkiej jest uwaga blokowo-rzadka autorów _FlashVSR_ @Zhuang2025FlashVSRTR. Jako alternatywę wybrano _SpargeAttention_ @zhang2025spargeattentionaccuratetrainingfreesparse, która realizuje to samo zadanie w sposób adaptacyjny, również nie wymaga trenowania, a działając w oparciu o szkielet SageAttention daje się z nią łączyć bez konfliktów implementacyjnych.
 
