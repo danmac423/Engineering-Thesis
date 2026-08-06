@@ -10,7 +10,7 @@ W implementacji referencyjnej wybór jądra obliczeniowego nie podlegał konfigu
 
 Łańcuch ten zastąpiono jawnym wyborem sterowanym dwoma niezależnymi parametrami, przekazywanymi przy budowie modelu i propagowanymi do wszystkich bloków transformera. Podział ten wynika z trybu pracy mechanizmu uwagi. Może on działać z maską blokową, łączącą najistotniejsze pary bloków z lokalnym oknem przestrzennym, albo w trybie standardowym, bez maskowania. Ścieżkę z maską obsługuje parametr `mask_attn_mode`, wybierający między jądrem `block_sparse_attn` a jądrem `block_sparse_sage2_attn_cuda` z biblioteki _SpargeAttention_. Ścieżkę bez maski blokowej obsługuje parametr `attn_mode`, wybierający między funkcją `sageattn` a wywołaniem `scaled_dot_product_attention` biblioteki PyTorch.
 
-Wybrane jądro wymaga obecności odpowiedniej biblioteki w środowisku. Jeżeli biblioteka nie jest dostępna, potok zgłasza ostrzeżenie i wykonuje uwagę gęstą, co zapobiega przerwaniu przetwarzania, lecz zmienia badaną konfigurację. Zgodność konfiguracji ze stanem środowiska weryfikowana jest zatem podczas budowy potoku, a wszystkie pomiary wykonano po potwierdzeniu, że żadna ze ścieżek zastępczych nie została użyta."
+Wybrane jądro wymaga obecności odpowiedniej biblioteki w środowisku. Jeżeli biblioteka nie jest dostępna, potok zgłasza ostrzeżenie i wykonuje uwagę gęstą, co zapobiega przerwaniu przetwarzania, lecz zmienia badaną konfigurację. Zgodność konfiguracji ze stanem środowiska weryfikowana jest zatem podczas budowy potoku, a wszystkie pomiary wykonano po potwierdzeniu, że żadna ze ścieżek zastępczych nie została użyta.
 
 == Integracja kwantyzacji
 <integracja-kwantyzacji>
