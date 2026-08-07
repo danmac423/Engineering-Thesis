@@ -34,5 +34,28 @@ Implementacja referencyjna obsługiwała długie nagrania odrębną klasą potok
 
 Sekwencja wejściowa dzielona jest na segmenty o zadanej długości, wyznaczane analogicznie do kafli przestrzennych. Segmenty przetwarzane są kolejno, a wynik zapisywany przyrostowo, co pozwala utrzymywać w pamięci operacyjnej wyłącznie bieżący segment; przy długich nagraniach materiał po czterokrotnym powiększeniu przekraczałby jej pojemność. Ponieważ każdy segment stanowi niezależny przebieg strumieniowy i nie dziedziczy kontekstu poprzednika, klatki z obszaru zakładki łączone są przez mieszanie liniowe. Końcówka segmentu poprzedniego i początek segmentu bieżącego sumowane są z wagami zmieniającymi się liniowo wzdłuż osi czasu.
 
-Długość segmentu nie jest dowolna. Czterokrotna przyczynowa kompresja czasowa autoenkodera wymusza wartości spełniające określoną zależność arytmetyczną, wyznaczane przez funkcje pomocnicze pakietu. Zbyt krótki segment jest przed przetworzeniem dopełniany przez powielenie ostatniej klatki, a nadmiarowe klatki są odrzucane po zakończeniu, dzięki czemu dopełnienie pozostaje niewidoczne dla warstw nadrzędnych.
+Długość segmentu nie jest dowolna. Czterokrotna przyczynowa kompresja czasowa autoenkodera wymusza wartości spełniające określoną zależność arytmetyczną, wyznaczane przez funkcje pomocnicze pakietu. Zbyt krótki segment jest przed przetworzeniem dopełniany przez powielenie ostatniej klatki, a nadmiarowe klatki są odrzucane po zakończeniu.
+
+== Aplikacja pokazowa
+<aplikacja-pokazowa>
+
+Aplikacja pokazowa powstała, aby udostępnić zaimplementowane mechanizmy bez znajomości interfejsu programistycznego pakietu i pozwolić na porównywanie konfiguracji na dowolnym nagraniu. Składa się z usługi sieciowej oraz interfejsu przeglądarkowego, komunikujących się przez protokół HTTP.
+
+Usługa udostępnia cztery operacje. Zlecenie przetwarzania przyjmowane jest wraz z plikiem wejściowym i pełną konfiguracją w formacie JSON. W odpowiedzi zwracany jest identyfikator zlecenia. Pozostałe operacje pozwalają odczytać stan pojedynczego zlecenia, pobrać jego wynik oraz wylistować wszystkie zlecenia. Próba pobrania wyniku zlecenia nieukończonego kończy się odmową ze wskazaniem bieżącego stanu.
+
+Zlecenia obsługiwane są asynchronicznie. Trafiają do kolejki, z której pobiera je pojedynczy proces roboczy uruchamiany przy starcie usługi. Ograniczenie do jednego procesu jest konieczne, ponieważ równoległe przetwarzanie dwóch nagrań wymagałoby jednoczesnego utrzymywania dwóch potoków na karcie, co przekroczyłoby jej budżet pamięci. Właściwa inferencja wykonywana jest w osobnym wątku, dzięki czemu operacje blokujące nie wstrzymują obsługi zapytań o stan zleceń.
+
+Proces roboczy utrzymuje zbudowany potok między kolejnymi zleceniami i odtwarza go wyłącznie wtedy, gdy zmieni się konfiguracja mechanizmu uwagi lub kwantyzacji. Wynika to z własności opisanych w podrozdziałach @wymienne-warianty-mechanizmu-uwagi[] i @integracja-kwantyzacji[]: wybór jąder obliczeniowych następuje przy budowie modelu, a kwantyzacja modyfikuje wagi nieodwracalnie. Parametry kafelkowania oraz parametry przetwarzania można natomiast zmieniać między zleceniami bez ponownej inicjalizacji.
+
+
+#figure(
+  image("../images/aplikacja_pokazowa.png", width: 100%),
+  caption: [
+    Interfejs aplikacji pokazowej z widocznymi parametrami trzech osi optymalizacji
+  ],
+) <img:aplikacja_pokazowa>
+
+Ponieważ przy włączonym kafelkowaniu czasowym wynik zapisywany jest przyrostowo w postaci osobnych plików odpowiadających segmentom, po zakończeniu przetwarzania pliki te są łączone w jedno nagranie.
+
+Interfejs przeglądarkowy, przedstawiony na @img:aplikacja_pokazowa[rysunku], udostępnia wszystkie trzy osie optymalizacji jako kontrolki formularza, pogrupowane w rozwijane sekcje odpowiadające kafelkowaniu przestrzennemu, kafelkowaniu czasowemu, mechanizmowi uwagi oraz kwantyzacji. Suwaki rozmiaru kafla mają skok równy 32, co zapewnia, że przetwarzany fragment nigdy nie wymaga dopełnienia. Po wysłaniu zlecenia interfejs cyklicznie odpytuje usługę o jego stan i wyświetla wynik po zakończeniu przetwarzania.
 

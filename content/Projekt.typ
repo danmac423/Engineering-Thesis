@@ -36,11 +36,10 @@ Kluczową decyzją projektową jest przenoszenie wyniku każdego kafla poza pami
 
 == Interfejsy systemu
 <interfejsy-systemu>
+
 Rdzeń systemu udostępniono przez trzy niezależne punkty wejścia, korzystające z tej samej implementacji potoku.
 
 Pierwszym jest uruchomienie z wiersza poleceń, przeznaczone do przetwarzania pojedynczego nagrania. Drugim jest skrypt przetwarzania wsadowego, stosowany przy generowaniu wyników dla całych zbiorów testowych. Trzecim jest aplikacja pokazowa, złożona z usługi sieciowej zbudowanej w oparciu o bibliotekę FastAPI oraz interfejsu przeglądarkowego wykorzystującego bibliotekę Gradio.
-
-Usługa sieciowa przyjmuje zlecenia przetwarzania wraz z pełną konfiguracją i obsługuje je asynchronicznie. Zlecenia trafiają do kolejki, z której pobiera je pojedynczy proces roboczy. Rozwiązanie takie jest konieczne, ponieważ równoległe przetwarzanie wielu nagrań przekroczyłoby budżet pamięci karty. Proces utrzymuje zbudowany potok między kolejnymi zleceniami i odtwarza go jedynie wtedy, gdy zmieni się konfiguracja uwagi lub kwantyzacji. Klient może sprawdzać stan zlecenia i pobrać wynik po zakończeniu przetwarzania.
 
 == Jakość kodu
 <jakość-kodu>
