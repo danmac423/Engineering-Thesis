@@ -38,7 +38,7 @@ Metryki pełnoreferencyjne wyznaczono wyłącznie dla zbioru YouHQ40. W zestawie
 
 Rejestrowano pięć wielkości: czas budowy potoku, czas inferencji całej sekwencji, czas przypadający na klatkę, ilość pamięci zajętej po zakończeniu inicjalizacji oraz szczytowe zużycie pamięci karty graficznej.
 
-Jako miarę zużycia pamięci przyjęto wartość `max_memory_reserved`, czyli szczytowy rozmiar puli zarezerwowanej przez alokator, a nie sumę rozmiarów żywych tensorów raportowaną przez `max_memory_allocated`. O wystąpieniu przepełnienia decyduje rozmiar puli, ponieważ to on odzwierciedla pamięć faktycznie odebraną sterownikowi, wraz z fragmentacją.
+Jako miarę zużycia pamięci przyjęto wartość `max_memory_reserved`, czyli szczytowy rozmiar puli zarezerwowanej przez alokator, a nie sumę rozmiarów żywych tensorów raportowaną przez `max_memory_allocated`. O wystąpieniu przepełnienia decyduje rozmiar puli, ponieważ to on odzwierciedla pamięć faktycznie odebraną sterownikowi, wraz z fragmentacją. Wartości zużycia pamięci podawane są w mebibajtach (MiB), zgodnie z jednostką raportowaną przez bibliotekę PyTorch.
 
 == Procedura pomiaru wydajności
 <procedura-pomiaru-wydajnosci>
@@ -68,7 +68,7 @@ zmienianą oraz parametry utrzymywane na stałym poziomie.
     // #show table.cell.where(x: 0): strong
 
     #table(
-      columns: (auto, 2fr, 2fr, 1.5fr),
+      columns: (auto, 2fr, 2fr, auto),
       align: left + top,
       stroke: 0.5pt + luma(150),
       fill: (col, row) => if row == 0 { luma(230) } else { none },
@@ -94,6 +94,6 @@ zmienianą oraz parametry utrzymywane na stałym poziomie.
 
 W eksperymencie E1 przyjęto rozdzielczość wejściową $192 times 352$, odpowiadającą scenariuszowi, dla którego autorzy modelu FlashVSR raportują szczytowe zużycie pamięci. Pozwala to zestawić uzyskane wartości bezpośrednio z liczbą przytoczoną w rozdziale 1, bez przeliczania między rozdzielczościami. Porównywalność samych konfiguracji zapewnia stały rozmiar kafla, od którego zależy szczytowe zużycie pamięci.
 
-Eksperyment E2 rozszerzono o trzy przebiegi uzupełniające. Pierwszy wykonano bez kafelkowania przestrzennego na karcie docelowej, w celu sprawdzenia, czy konfiguracja referencyjna mieści się w jej budżecie pamięci. Drugi powtarza tę samą konfigurację na akceleratorze A100, gdzie mieści się ona w pamięci, co pozwala określić skalę jej zapotrzebowania. Trzeci wykonano dla kafla $224 times 224$, przy którym konfiguracja referencyjna kończy się przepełnieniem pamięci, lecz z włączoną kwantyzacją i podmienionymi jądrami uwagi, aby ustalić, czy badane techniki przesuwają granicę wykonalności, a nie jedynie obniżają zużycie pamięci w konfiguracjach już wykonalnych.
+Eksperyment E2 rozszerzono o pięć przebiegów uzupełniających. Konfigurację referencyjną, przetwarzającą klatkę bez podziału na kafle, uruchomiono przy dwóch rozdzielczościach wejściowych: $192 times 352$, odpowiadającej scenariuszowi autorów modelu, oraz $256 times 448$, przyjętej w pozostałych pomiarach tego eksperymentu. Każdą z nich uruchomiono na obu platformach — na karcie docelowej w celu sprawdzenia, czy mieści się w jej budżecie pamięci, oraz na akceleratorze A100, gdzie się mieści, w celu określenia skali zapotrzebowania. Piąty przebieg wykonano dla kafla $224 times 224$, przy którym konfiguracja referencyjna kończy się przepełnieniem pamięci, lecz z włączoną kwantyzacją i podmienionymi jądrami uwagi, aby ustalić, czy badane techniki przesuwają granicę wykonalności, a nie jedynie obniżają zużycie pamięci w konfiguracjach już wykonalnych.
 
 Konfiguracje eksperymentu E3 dobrano tak, by tworzyły łańcuch przyrostowy, w którym każda kolejna konfiguracja różni się od poprzedniej jedną zmianą. Punktem wyjścia jest konfiguracja referencyjna, do której dodawane jest kolejno kafelkowanie przestrzenne, podmiana jądra uwagi gęstej, podmiana selekcji rzadkiej oraz kwantyzacja wag i aktywacji. Konstrukcja ta pozwala przypisać zmianę jakości konkretnej technice, zamiast porównywać konfiguracje różniące się kilkoma parametrami naraz.
