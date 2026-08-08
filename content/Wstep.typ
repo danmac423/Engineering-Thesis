@@ -23,6 +23,8 @@ Realizacja tego celu wymagała refaktoryzacji kodu referencyjnej implementacji d
 
 Zakres pracy ogranicza się do fazy inferencji. Nie przeprowadzono treningu ani dostrajania, a we wszystkich eksperymentach wykorzystano publicznie udostępnione wagi. Wkład pracy ma charakter inżynieryjno-eksperymentalny i polega na adaptacji istniejącego modelu do środowiska o ograniczonych zasobach i zbadaniu zależności między jakością rekonstrukcji, czasem inferencji a zużyciem pamięci.
 
+Kod źródłowy pakietu wraz z narzędziami pomiarowymi udostępniono publicznie pod adresem #link("https://github.com/danmac423/FlashVSR/tree/main")
+
 
 == Struktura pracy
 <struktura-pracy>

@@ -29,7 +29,14 @@ Istotnym założeniem projektowym jest oddzielenie budowy potoku od jego wykonan
 
 == Przepływ przetwarzania
 <przepływ-przetwarzania>
-Przetwarzanie nagrania przebiega w kilku etapach: dekodowanie materiału wejściowego, dopełnienie liczby klatek, podział na segmenty czasowe, podział każdego segmentu na kafle przestrzenne, inferencja, złożenie wyników i zapis. Mechanizmy realizujące poszczególne etapy opisano w @implementacja[rozdziale].
+Przebieg przetwarzania nagrania przedstawiono na @rys:przeplyw[rysunku]. Sekwencja wejściowa dzielona jest najpierw na segmenty czasowe, a każdy segment na kafle przestrzenne, dzięki czemu właściwa inferencja wykonywana jest zawsze na pojedynczym kaflu. Mechanizmy realizujące poszczególne etapy opisano w @implementacja[rozdziale].
+
+#figure(
+  image("../images/rys_przeplyw_przetwarzania.svg", width: 50%),
+  caption: [Przepływ przetwarzania nagrania w zaimplementowanym potoku. W pamięci karty graficznej wykonywana jest wyłącznie inferencja pojedynczego kafla],
+) <rys:przeplyw>
+
+Przetwarzanie nagrania przebiega w kilku etapach: dekodowanie materiału wejściowego, podział na segmenty czasowe dopełnienie liczby klatek, podział każdego segmentu na kafle przestrzenne, inferencja, złożenie wyników i zapis. Mechanizmy realizujące poszczególne etapy opisano w @implementacja[rozdziale].
 
 Kluczową decyzją projektową jest przenoszenie wyniku każdego kafla poza pamięć karty graficznej bezpośrednio po jego przetworzeniu. Na karcie znajdują się jednocześnie wyłącznie wagi modelu, pamięć podręczna kluczy i wartości oraz aktywacje jednego kafla, natomiast płótna akumulacyjne obejmujące jeden segment czasowy utrzymywane są w pamięci operacyjnej.
 

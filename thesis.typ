@@ -133,7 +133,7 @@
   bibliography("library.bib", style: "ieee", title: "Bibliografia")
 
   // List of Acronyms - comment out, if not needed (no abbreviations were used).
-  glossary-outline(glossary)
+  // glossary-outline(glossary)
 
   // List of figures - comment out, if not needed.
   figure-outline(lang.thesis)

@@ -29,13 +29,21 @@ Podstawową zaletą metod jednokrokowych jest więc drastyczna redukcja czasu in
 == Model FlashVSR
 <model-flashvsr>
 
-_FlashVSR_ @Zhuang2025FlashVSRTR to architektura przeznaczona do strumieniowego przetwarzania wideo w czasie rzeczywistym, wykorzystująca jednokrokowy model dyfuzyjny oparty na szkielecie _Wan 2.1-1.3B_ dostrojonym za pomocą metody LoRA. Aby wyeliminować opóźnienia i spadek wydajności, autorzy wprowadzili lekki moduł projekcji wejściowej (_Causal LR Projection-In_). Moduł ten grupuje po cztery klatki LR i poddaje je 8-krotnej kompresji przestrzennej za pomocą operacji _pixel shuffle_, a następnie 4-krotnej kompresji czasowej przy użyciu przyczynowych konwolucji 3D (_3D CausalConv_). Dzięki zastosowaniu pamięci podręcznej (ang. _causal cache_), cechy z poprzednich sekwencji są spójnie przenoszone i rzutowane przez perceptron wielowarstwowy bezpośrednio do przestrzeni utajonej transformera dyfuzyjnego.
+_FlashVSR_ @Zhuang2025FlashVSRTR to architektura przeznaczona do strumieniowego przetwarzania wideo w czasie rzeczywistym, wykorzystująca jednokrokowy model dyfuzyjny oparty na szkielecie _Wan 2.1-1.3B_ dostrojonym za pomocą metody LoRA. Ogólną budowę modelu przedstawiono na @rys:flashvsr[rysunku].
+
+#figure(
+  image("../images/rys_flashvsr_architektura.svg", width: 100%),
+  caption: [Schemat przetwarzania w modelu FlashVSR: projekcja wejściowa, transformer dyfuzyjny z uwagą blokowo-rzadką oraz lekki dekoder warunkowy. Opracowanie własne na podstawie @Zhuang2025FlashVSRTR.],
+) <rys:flashvsr>
+
+Aby wyeliminować opóźnienia i spadek wydajności, autorzy wprowadzili lekki moduł projekcji wejściowej (_Causal LR Projection-In_). Moduł ten grupuje po cztery klatki LR i poddaje je 8-krotnej kompresji przestrzennej za pomocą operacji _pixel shuffle_, a następnie 4-krotnej kompresji czasowej przy użyciu przyczynowych konwolucji 3D (_3D CausalConv_). Dzięki zastosowaniu pamięci podręcznej (ang. _causal cache_), cechy z poprzednich sekwencji są spójnie przenoszone i rzutowane przez perceptron wielowarstwowy bezpośrednio do przestrzeni utajonej transformera dyfuzyjnego.
 
 Głównym rozwiązaniem problemu złożoności obliczeniowej standardowej samouwagi 3D jest zastosowanie blokowo-rzadkiego mechanizmu uwagi z ograniczeniem lokalnym (ang. _Locality-Constrained Sparse Attention_). FlashVSR wyznacza przybliżoną mapę uwagi poprzez uśrednianie reprezentacji kluczy i wartości, a pełne obliczenia wykonuje wyłącznie dla obszarów o najwyższych wynikach (ang. _top-k_). Dodatkowe nałożenie lokalnych okien przestrzennych ujednolica kodowanie pozycji między treningiem a wnioskowaniem, co umożliwia skalowanie modelu do bardzo wysokich rozdzielczości.
 
 Zamiast dzielić długie wideo na nachodzące na siebie fragmenty FlashVSR przetwarza nagranie w sposób strumieniowy. Płynność i spójność klatek zapewnia pamięć _KV-cache_ z mechanizmem okna przesuwnego. Pozwala ona przechowywać najważniejsze cechy obrazu z poprzednich kroków bez konieczności ponownego ich przeliczania.
 
 Ostatnim kluczowym elementem architektury jest zastąpienie ciężkiego, standardowego dekodera 3D VAE autorskim, lekkim dekoderem warunkowym (ang. _Tiny Conditional Decoder_). Zapewnia on około 7-krotne przyspieszenie etapu rekonstrukcji obrazu w przestrzeni pikseli w porównaniu z oryginalnym dekoderem sieci Wan, nie powodując przy tym widocznej utraty jakości wizualnej.
+
 
 == Podsumowanie i wyznaczenie luki badawczej
 <podsumowanie-i-wyznaczenie-luki-badawczej>
