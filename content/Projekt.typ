@@ -7,7 +7,7 @@
 <platforma-sprzętowa>
 Badania zrealizowano na dwóch stanowiskach sprzętowych o odmiennych rolach. Główną platformą docelową była karta NVIDIA GeForce RTX 3080 (10 GB VRAM, architektura Ampere, compute capability 8.6) zainstalowana w komputerze z procesorem AMD Ryzen 5 5600X oraz 32 GB pamięci RAM - pojemność RAM ma  kluczowe znaczenie, gdyż trafiają do niej wyniki pośrednie. Wybrane GPU reprezentuje segment kart konsumenckich, dla których domyślne zapotrzebowanie FlashVSR przekracza dostępny budżet pamięci.
 
-Pomocniczo wykorzystano akcelerator NVIDIA A100, wyposażony w 80 GB pamięci. Uruchomiono na nim konfigurację referencyjną, bez kafelkowania przestrzennego, której zapotrzebowanie na pamięć przekracza budżet karty docelowej. Podział zadań między obie platformy oraz wynikające z niego zastrzeżenia opisano w @metodyka-badan-i-testy[rozdziale].
+Pomocniczo wykorzystano akcelerator NVIDIA A100, wyposażony w 80 GB pamięci. Uruchomiono na nim konfigurację referencyjną, - przestrzennego, której zapotrzebowanie na pamięć przekracza budżet karty docelowej. Podział zadań między obie platformy oraz wynikające z niego zastrzeżenia opisano w @metodyka-badan-i-testy[rozdziale].
 
 == Środowisko programistyczne
 <środowisko-programistyczne>

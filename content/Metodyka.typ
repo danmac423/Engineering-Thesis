@@ -10,7 +10,7 @@ Celem przeprowadzonych eksperymentów jest odpowiedź na trzy pytania badawcze, 
 
 Pierwsze dotyczy wykonalności: przy jakiej konfiguracji potok mieści się w budżecie 10 GB pamięci karty graficznej i jaki jest koszt czasowy tego ograniczenia. Drugie dotyczy udziału poszczególnych osi optymalizacji: jak podmiana jądra uwagi gęstej, podmiana selekcji rzadkiej oraz kwantyzacja wpływają na czas inferencji i szczytowe zużycie pamięci, osobno i w kombinacji. Trzecie dotyczy kosztu jakościowego: o ile pogarsza się rekonstrukcja po włączeniu kolejnych technik i jak koszt ten rozkłada się między nie.
 
-Punktem odniesienia dla wszystkich pomiarów jest konfiguracja referencyjna: przetwarzanie bez kafelkowania przestrzennego, uwaga gęsta realizowana mechanizmem SDPA, selekcja rzadka zgodna z implementacją autorów modelu, wagi i aktywacje w formacie bfloat16.
+Punktem odniesienia dla wszystkich pomiarów jest konfiguracja bazowa. Odpowiada modelowi w postaci udostępnionej przez autorów: przetwarzanie klatki bez podziału na kafle, uwaga gęsta realizowana mechanizmem SDPA, selekcja rzadka zgodna z implementacją autorów, wagi i aktywacje w formacie bfloat16.
 
 == Zbiory testowe i przygotowanie danych
 <zbiory-testowe-i-przygotowanie-danych>
@@ -43,7 +43,7 @@ Jako miarę zużycia pamięci przyjęto wartość `max_memory_reserved`, czyli s
 == Procedura pomiaru wydajności
 <procedura-pomiaru-wydajnosci>
 
-Pomiary wykonywano na materiale o długości 101 klatek. Liczba ta odpowiada scenariuszowi raportowanemu przez autorów modelu FlashVSR, co pozwala odnieść uzyskane wyniki do wartości przytoczonej w rozdziale 1. Klatki wycinano centralnie z klipu testowego do zadanej rozdzielczości.
+Pomiary wykonywano na materiale o długości 101 klatek. Liczba ta odpowiada scenariuszowi raportowanemu przez autorów modelu FlashVSR. Klatki wycinano centralnie z klipu testowego do zadanej rozdzielczości.
 
 Materiał wczytywano do pamięci operacyjnej przed rozpoczęciem pomiaru, a wynik odrzucano bez zapisu. Mierzony czas nie obejmuje zatem dekodowania wejścia ani kodowania wyjścia, co ogranicza wpływ operacji wejścia-wyjścia na porównanie konfiguracji.
 
@@ -51,7 +51,7 @@ Potok budowano jednorazowo dla każdej konfiguracji, a czas budowy mierzono osob
 
 Przed pomiarem wykonywano przebieg rozgrzewkowy, pochłaniający kompilację jąder obliczeniowych i pierwszą alokację buforów pamięci podręcznej. Licznik szczytowego zużycia pamięci zerowano przed każdym przebiegiem mierzonym, a pulę alokatora zwalniano między konfiguracjami. Raportowaną wartością czasu jest mediana przebiegów mierzonych, a wartością zużycia pamięci ich maksimum. Wybór maksimum wynika z faktu, że o mieszczeniu się w budżecie decyduje przypadek najgorszy, a nie przeciętny.
 
-Czas inferencji mierzono wyłącznie na karcie RTX 3080, ponieważ zależy on od architektury karty i nie przenosi się między platformami. Na tej samej karcie mierzono szczytowe zużycie pamięci we wszystkich konfiguracjach, które się na niej uruchamiają. Wyjątkiem jest konfiguracja referencyjna, przetwarzająca klatkę bez podziału na kafle. Ponieważ kończy się ona na karcie docelowej przepełnieniem pamięci, jej zapotrzebowanie zmierzono dodatkowo na akceleratorze A100. Na tym samym akceleratorze generowano materiał wyjściowy dla zbiorów testowych, na którym wyznaczano metryki jakości, ze względu na czas potrzebny na przetworzenie obu zbiorów.
+Czas inferencji mierzono wyłącznie na karcie RTX 3080, ponieważ zależy on od architektury karty i nie przenosi się między platformami. Na tej samej karcie mierzono szczytowe zużycie pamięci we wszystkich konfiguracjach, które się na niej uruchamiają. Wyjątkiem jest konfiguracja bazwia. Ponieważ kończy się ona na karcie docelowej przepełnieniem pamięci, jej zapotrzebowanie zmierzono dodatkowo na akceleratorze A100. Na tym samym akceleratorze generowano materiał wyjściowy dla zbiorów testowych, na którym wyznaczano metryki jakości, ze względu na czas potrzebny na przetworzenie obu zbiorów.
 
 == Plan eksperymentów
 <plan-eksperymentow>
@@ -94,6 +94,6 @@ zmienianą oraz parametry utrzymywane na stałym poziomie.
 
 W eksperymencie E1 przyjęto rozdzielczość wejściową $192 times 352$, odpowiadającą scenariuszowi, dla którego autorzy modelu FlashVSR raportują szczytowe zużycie pamięci. Pozwala to zestawić uzyskane wartości bezpośrednio z liczbą przytoczoną w rozdziale 1, bez przeliczania między rozdzielczościami. Porównywalność samych konfiguracji zapewnia stały rozmiar kafla, od którego zależy szczytowe zużycie pamięci.
 
-Eksperyment E2 rozszerzono o pięć przebiegów uzupełniających. Konfigurację referencyjną, przetwarzającą klatkę bez podziału na kafle, uruchomiono przy dwóch rozdzielczościach wejściowych: $192 times 352$, odpowiadającej scenariuszowi autorów modelu, oraz $256 times 448$, przyjętej w pozostałych pomiarach tego eksperymentu. Każdą z nich uruchomiono na obu platformach — na karcie docelowej w celu sprawdzenia, czy mieści się w jej budżecie pamięci, oraz na akceleratorze A100, gdzie się mieści, w celu określenia skali zapotrzebowania. Piąty przebieg wykonano dla kafla $224 times 224$, przy którym konfiguracja referencyjna kończy się przepełnieniem pamięci, lecz z włączoną kwantyzacją i podmienionymi jądrami uwagi, aby ustalić, czy badane techniki przesuwają granicę wykonalności, a nie jedynie obniżają zużycie pamięci w konfiguracjach już wykonalnych.
+Eksperyment E2 rozszerzono o pięć przebiegów uzupełniających. Konfigurację bazową uruchomiono przy dwóch rozdzielczościach wejściowych: $192 times 352$, odpowiadającej scenariuszowi autorów modelu, oraz $256 times 448$, przyjętej w pozostałych pomiarach tego eksperymentu. Każdą z nich uruchomiono na obu platformach - na karcie docelowej w celu sprawdzenia, czy mieści się w jej budżecie pamięci, oraz na akceleratorze A100, gdzie się mieści, w celu określenia skali zapotrzebowania. Piąty przebieg wykonano dla kafla $224 times 224$, przy którym konfiguracja referencyjna kończy się przepełnieniem pamięci, lecz z włączoną kwantyzacją i podmienionymi jądrami uwagi, aby ustalić, czy badane techniki przesuwają granicę wykonalności, a nie jedynie obniżają zużycie pamięci w konfiguracjach już wykonalnych.
 
-Konfiguracje eksperymentu E3 dobrano tak, by tworzyły łańcuch przyrostowy, w którym każda kolejna konfiguracja różni się od poprzedniej jedną zmianą. Punktem wyjścia jest konfiguracja referencyjna, do której dodawane jest kolejno kafelkowanie przestrzenne, podmiana jądra uwagi gęstej, podmiana selekcji rzadkiej oraz kwantyzacja wag i aktywacji. Konstrukcja ta pozwala przypisać zmianę jakości konkretnej technice, zamiast porównywać konfiguracje różniące się kilkoma parametrami naraz.
+Konfiguracje eksperymentu E3 dobrano tak, by tworzyły łańcuch przyrostowy, w którym każda kolejna konfiguracja różni się od poprzedniej jedną zmianą. Punktem wyjścia jest konfiguracja bazowa, do której dodawane jest kolejno kafelkowanie przestrzenne, podmiana jądra uwagi gęstej, podmiana selekcji rzadkiej oraz kwantyzacja wag i aktywacji. Konstrukcja ta pozwala przypisać zmianę jakości konkretnej technice, zamiast porównywać konfiguracje różniące się kilkoma parametrami naraz.
