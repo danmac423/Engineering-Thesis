@@ -24,7 +24,7 @@
     `false`. variable to false.
 
   **/
-  let draft = true
+  let draft = false
   let in-print = not draft
   set-margin-note-defaults(hidden: not draft)
 
@@ -69,11 +69,18 @@
     abstract: (
       en: [
         // max 1 page
-        #todo[Write the abstract in English.]
+        Diffusion-based video super-resolution (VSR) models produce sharper and perceptually more convincing reconstructions than methods trained with pixel-wise losses, but at a substantial computational cost. Single-step models obtained through knowledge distillation, such as FlashVSR @Zhuang2025FlashVSRTR, eliminate the cost of iterative denoising but do not reduce memory consumption during a single inference pass. This is a critical issue, as required memory is the deciding factor in whether the model can be executed on a given device. FlashVSR was developed on server-grade accelerators, and its peak memory demand exceeds the budget of most consumer graphics cards, even for input resolutions significantly lower than standard recordings.
+
+        The objective of this work is to enable the inference of a single-step, diffusion-based video super-resolution model on a graphics card equipped with 10 GB of VRAM, while maintaining acceptable reconstruction quality and processing time. To achieve this, the reference implementation of _FlashVSR_ was refactored, transforming a collection of scripts with hard-coded settings into a modular package with a fully configurable inference pipeline. Three independently switchable optimization axes were implemented: interchangeable attention kernels, covering both the dense path and the sparse-selection path; integer quantization of the diffusion transformer in weight-only and weight-and-activation variants; spatial and temporal tiling. A measurement methodology was developed, covering inference time, peak GPU memory usage, and seven quality metrics. Reconstruction quality was evaluated on two test sets: one featuring synthetic degradations and another with real-world degradations.
+
+        It was demonstrated that the individual optimization axes play markedly different roles. Spatial tiling proved to be the necessary condition for feasibility, being the only technique that decouples peak memory usage from input resolution. Replacing the dense attention kernel brought no benefit, whereas modifying the sparse-selection mechanism shortened inference time by 12.9%. The application of quantization lowered peak memory usage by 330 MiB or 898 MiB, depending on the variant, though this came at the cost of longer processing times. The drop in reconstruction quality fell almost entirely on tiling, while the introduced computational modifications proved virtually quality-neutral on both test sets.
       ],
       pl: [
-        // max 1 page
-        #todo[Napisać streszczenie w języku polskim.]
+        Modele superrozdzielczości wideo (VSR) oparte na dyfuzji pozwalają uzyskać ostrzejsze i wizualnie bardziej naturalne rekonstrukcje w porównaniu do metod uczonych na podstawie błędów na poziomie pojedynczych pikseli, jednak wiąże się to ze znacznie większym kosztem obliczeniowym. Modele jednokrokowe uzyskiwane przez destylację wiedzy, takie jak _FlashVSR_ @Zhuang2025FlashVSRTR, eliminują koszt iteracyjnego odszumiania, ale nie redukują zużycia pamięci podczas pojedynczej inferencji. Jest to kluczowy problem, ponieważ to właśnie ilość wymaganej pamięci decyduje o tym, czy model może zostać uruchomiony na danym urządzeniu. Model _FlashVSR_ został opracowany na akceleratorach klasy serwerowej, a jego szczytowe zapotrzebowanie na pamięć przekracza budżet większości konsumenckich kart graficznych, nawet przy rozdzielczościach wejściowych znacznie niższych od standardowych nagrań.
+
+        Celem pracy jest umożliwienie inferencji jednokrokowego, dyfuzyjnego modelu superrozdzielczości wideo na karcie graficznej wyposażonej w 10 GB pamięci VRAM, przy zachowaniu akceptowalnej jakości rekonstrukcji i czasu przetwarzania. W ramach realizacji tego zadania zrefaktoryzowano referencyjną implementację modelu _FlashVSR_, przekształcając zbiór skryptów o sztywnych ustawieniach w modułowy pakiet z w pełni konfigurowalnym potokiem inferencyjnym. Zaimplementowano trzy niezależnie przełączane osie optymalizacji: wymienne jądra mechanizmu uwagi, obejmujące zarówno ścieżkę gęstą, jak i ścieżkę selekcji rzadkiej; całkowitoliczbową kwantyzację transformatora dyfuzyjnego w wariantach wyłącznie dla wag oraz dla wag i aktywacji; a także przestrzenne i czasowe kafelkowanie. Opracowano metodologię pomiarową obejmującą czas inferencji, szczytowe zużycie pamięci GPU oraz siedem metryk jakości. Jakość rekonstrukcji oceniono na dwóch zbiorach testowych: jednym zawierającym degradacje syntetyczne, a drugim z degradacjami rzeczywistymi.
+
+        Wykazano, że poszczególne osie optymalizacji odgrywają wyraźnie odmienne role. Kafelkowanie przestrzenne okazało się warunkiem koniecznym do uruchomienia modelu, ponieważ jako jedyne uniezależnia szczytowe zużycie pamięci od rozdzielczości wejściowej. Zastąpienie jądra mechanizmu uwagi dla ścieżki gęstej nie przyniosło korzyści, natomiast modyfikacja mechanizmu dla ścieżki selekcji rzadkiej pozwoliła na skrócenie czasu inferencji o 12,9%. Zastosowanie kwantyzacji obniżyło szczytowe zużycie pamięci o 330 MiB lub 898 MiB, w zależności od wariantu, jednak odbyło się to kosztem dłuższego czasu przetwarzania. Spadek jakości rekonstrukcji wynikał niemal w całości z zastosowania kafelkowania, podczas gdy wprowadzone modyfikacje obliczeniowe okazały się na obu zbiorach testowych praktycznie neutralne pod względem jakości.
       ],
     ),
     keywords: (

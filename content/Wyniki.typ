@@ -8,7 +8,10 @@ Wyniki eksperymentu E1 zestawiono w @tab:e1[tabeli], a zmiany względem konfigur
 
 #figure(
   kind: table,
-  caption: [Czas inferencji i szczytowe zużycie pamięci dla dwunastu kombinacji mechanizmu uwagi i trybu kwantyzacji (wejście 192 $times$ 352, kafel 192, 101 klatek)],
+  caption: flex-caption(
+    [Czas inferencji i szczytowe zużycie pamięci dla dwunastu kombinacji mechanizmu uwagi i trybu kwantyzacji (wejście 192 $times$ 352, kafel 192, 101 klatek)],
+    [Czas inferencji i szczytowe zużycie pamięci dla dwunastu kombinacji mechanizmu uwagi i trybu kwantyzacji],
+  ),
   [
     #set text(size: 8.5pt)
     #show table.cell.where(y: 0): strong
@@ -82,7 +85,10 @@ Wyniki eksperymentu E2 zestawiono w @tab:e2[tabeli]. Pomiary wykonano przy rozdz
 
 #figure(
   kind: table,
-  caption: [Czas inferencji i szczytowe zużycie pamięci w funkcji rozmiaru kafla (wejście 256 $times$ 448, zakładka 24)],
+  caption: flex-caption(
+    [Czas inferencji i szczytowe zużycie pamięci w funkcji rozmiaru kafla (wejście 256 $times$ 448, zakładka 24)],
+    [Czas inferencji i szczytowe zużycie pamięci w funkcji rozmiaru kafla],
+  ),
   [
     #set text(size: 8.5pt)
     #show table.cell.where(y: 0): strong
@@ -119,7 +125,10 @@ Skalę zapotrzebowania określono na akceleratorze A100, gdzie obie konfiguracje
 
 #figure(
   kind: table,
-  caption: [Zapotrzebowanie konfiguracji bazowej, zmierzone na akceleratorze A100],
+  caption: flex-caption(
+    [Zapotrzebowanie konfiguracji bazowej, zmierzone na akceleratorze A100],
+    [Zapotrzebowanie konfiguracji bazowej],
+  ),
   [
     #set text(size: 8.5pt)
     #show table.cell.where(y: 0): strong
@@ -147,7 +156,10 @@ Same techniki obliczeniowe przesuwają natomiast granicę wykonalności o jeden 
 
 #figure(
   kind: table,
-  caption: [Przesunięcie granicy wykonalności: rozmiar kafla niewykonalny w konfiguracji odniesienia staje się wykonalny po zastosowaniu badanych technik (wejście 256 $times$ 448, 101 klatek)],
+  caption: flex-caption(
+    [Przesunięcie granicy wykonalności: rozmiar kafla niewykonalny w konfiguracji odniesienia staje się wykonalny po zastosowaniu badanych technik (wejście 256 $times$ 448, 101 klatek)],
+    [Przesunięcie granicy wykonalności],
+  ),
   [
     #set text(size: 8.5pt)
     #show table.cell.where(y: 0): strong
@@ -174,7 +186,10 @@ Wyniki eksperymentu E3 dla zbioru YouHQ40 zestawiono w @tab:jakosc-youhq40[tabel
 
 #figure(
   kind: table,
-  caption: [Metryki jakości dla zbioru YouHQ40, wartości uśrednione po klipach],
+  caption: flex-caption(
+    [Metryki jakości dla zbioru YouHQ40, wartości uśrednione po klipach],
+    [Metryki jakości dla zbioru YouHQ40],
+  ),
   [
     #set text(size: 8.5pt)
     #show table.cell.where(y: 0): strong
@@ -275,7 +290,10 @@ Wyniki dla zbioru VideoLQ, zawierającego nagrania o degradacjach rzeczywistych,
 
 #figure(
   kind: table,
-  caption: [Metryki bezreferencyjne dla zbioru VideoLQ, wartości uśrednione po klipach],
+  caption: flex-caption(
+    [Metryki bezreferencyjne dla zbioru VideoLQ, wartości uśrednione po klipach],
+    [Metryki bezreferencyjne dla zbioru VideoLQ],
+  ),
   [
     #set text(size: 8.5pt)
     #show table.cell.where(y: 0): strong
@@ -323,12 +341,10 @@ Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedsta
 #figure(
   image("../images/porownanie_006.svg", width: 100%),
   caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13.],
-
 ) <rys:jakosc-porownanie-ptak>
 #figure(
   image("../images/porownanie_008.svg", width: 100%),
   caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0.],
-
 ) <rys:jakosc-porownanie-targ>
 
 

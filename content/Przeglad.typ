@@ -33,7 +33,10 @@ _FlashVSR_ @Zhuang2025FlashVSRTR to architektura przeznaczona do strumieniowego 
 
 #figure(
   image("../images/rys_flashvsr_architektura.svg", width: 100%),
-  caption: [Schemat przetwarzania w modelu FlashVSR: projekcja wejściowa, transformer dyfuzyjny z uwagą blokowo-rzadką oraz lekki dekoder warunkowy. Opracowanie własne na podstawie @Zhuang2025FlashVSRTR.],
+  caption: flex-caption(
+    [Schemat przetwarzania w modelu FlashVSR: projekcja wejściowa, transformer dyfuzyjny z uwagą blokowo-rzadką oraz lekki dekoder warunkowy; opracowanie własne na podstawie @Zhuang2025FlashVSRTR],
+    [Schemat przetwarzania w modelu FlashVSR],
+  ),
 ) <rys:flashvsr>
 
 Aby wyeliminować opóźnienia i spadek wydajności, autorzy wprowadzili lekki moduł projekcji wejściowej (_Causal LR Projection-In_). Moduł ten grupuje po cztery klatki LR i poddaje je 8-krotnej kompresji przestrzennej za pomocą operacji _pixel shuffle_, a następnie 4-krotnej kompresji czasowej przy użyciu przyczynowych konwolucji 3D (_3D CausalConv_). Dzięki zastosowaniu pamięci podręcznej (ang. _causal cache_), cechy z poprzednich sekwencji są spójnie przenoszone i rzutowane przez perceptron wielowarstwowy bezpośrednio do przestrzeni utajonej transformera dyfuzyjnego.
@@ -59,8 +62,11 @@ Architektura _FlashVSR_ przełamuje to ograniczenie poprzez sprowadzenie procesu
 
 #figure(
   kind: table,
-  caption: [Porównanie klas metod superrozdzielczości wideo pod względem
-    kosztu obliczeniowego, zapotrzebowania na pamięć i jakości rekonstrukcji],
+  caption: flex-caption(
+    [Porównanie klas metod superrozdzielczości wideo pod względem
+      kosztu obliczeniowego, zapotrzebowania na pamięć i jakości rekonstrukcji],
+    [Porównanie klas metod superrozdzielczości wideo],
+  ),
   [
     #set text(size: 8.5pt)
     #show table.cell.where(y: 0): strong

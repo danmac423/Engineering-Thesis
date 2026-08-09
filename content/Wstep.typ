@@ -17,7 +17,7 @@ Stwarza to istotną barierę, ponieważ dostępne modele, takie jak _FlashVSR_, 
 == Cel i zakres pracy
 <cel-i-zakres-pracy>
 
-Celem pracy jest umożliwienie inferencji jednokrokowego, dyfuzyjnego modelu superrozdzielczości wideo na karcie graficznej wyposażonej w 10 GB pamięci VRAM, przy zachowaniu akceptowalnych jakości rekonstrukcji i czasu przetwarzania. Jako model bazowy przyjęto _FlashVSR_ @Zhuang2025FlashVSRTR.
+Celem pracy jest umożliwienie inferencji jednokrokowego, dyfuzyjnego modelu superrozdzielczości wideo na karcie graficznej wyposażonej w 10 GB pamięci VRAM, przy zachowaniu akceptowalnej jakości rekonstrukcji i czasu przetwarzania. Jako model bazowy przyjęto _FlashVSR_ @Zhuang2025FlashVSRTR.
 
 Realizacja tego celu wymagała refaktoryzacji kodu referencyjnej implementacji do postaci modularnego pakietu oraz zaimplementowania trzech konfigurowalnych technik redukujących wymagania sprzętowe: wymiennych wariantów mechanizmu uwagi, kwantyzacji, oraz kafelkowania przestrzennego i czasowego. Opracowano również metodykę pomiarową obejmującą czas inferencji, szczytowe zużycie pamięci i jakość rekonstrukcji. Umożliwiło to porównanie uzyskanych konfiguracji między sobą oraz z konfiguracją referencyjną.
 

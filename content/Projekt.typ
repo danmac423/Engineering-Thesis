@@ -33,7 +33,7 @@ Przebieg przetwarzania nagrania przedstawiono na @rys:przeplyw[rysunku]. Sekwenc
 
 #figure(
   image("../images/rys_przeplyw_przetwarzania.svg", width: 50%),
-  caption: [Przepływ przetwarzania nagrania w zaimplementowanym potoku. W pamięci karty graficznej wykonywana jest wyłącznie inferencja pojedynczego kafla],
+  caption: [Przepływ przetwarzania nagrania w zaimplementowanym potoku],
 ) <rys:przeplyw>
 
 Przetwarzanie nagrania przebiega w kilku etapach: dekodowanie materiału wejściowego, podział na segmenty czasowe dopełnienie liczby klatek, podział każdego segmentu na kafle przestrzenne, inferencja, złożenie wyników i zapis. Mechanizmy realizujące poszczególne etapy opisano w @implementacja[rozdziale].

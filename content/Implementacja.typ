@@ -50,9 +50,12 @@ Proces roboczy utrzymuje zbudowany potok między kolejnymi zleceniami i odtwarza
 
 #figure(
   image("../images/aplikacja_pokazowa.png", width: 100%),
-  caption: [
-    Interfejs aplikacji pokazowej z widocznymi parametrami trzech osi optymalizacji
-  ],
+  caption: flex-caption(
+    [
+      Interfejs aplikacji pokazowej z widocznymi parametrami trzech osi optymalizacji
+    ],
+    [Interfejs aplikacji pokazowej],
+  ),
 ) <img:aplikacja_pokazowa>
 
 Ponieważ przy włączonym kafelkowaniu czasowym wynik zapisywany jest przyrostowo w postaci osobnych plików odpowiadających segmentom, po zakończeniu przetwarzania pliki te są łączone w jedno nagranie.
