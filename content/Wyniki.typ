@@ -316,8 +316,21 @@ Wyniki dla zbioru VideoLQ, zawierającego nagrania o degradacjach rzeczywistych,
     )],
 ) <tab:jakosc-videolq-delty>
 
-
 Zbiór VideoLQ powtarza zaobserwowaną zależność. Na wprowadzenie kafelkowania przypada od 86% do 98% zmiany każdej z metryk, a trzy kolejne podmiany mieszczą się w przedziale 0,04 w skali MUSIQ. Wniosek o neutralności jakościowej optymalizacji obliczeniowych przenosi się zatem na nagrania rzeczywiste.
+
+Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedstawiono na rysunkach @rys:jakosc-porownanie-ptak[] i @rys:jakosc-porownanie-targ[]. Kolumny przedstawiają materiał wejściowy oraz trzy wybrane konfiguracje z tabeli 12: bazową, bazową z kafelkowaniem oraz konfigurację ze wszystkimi optymalizacjami. W obu przypadkach wyniki pozostają nierozróżnialne, co potwierdza wniosek o neutralności jakościowej optymalizacji obliczeniowych.
+
+#figure(
+  image("../images/porownanie_006.svg", width: 100%),
+  caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13.],
+
+) <rys:jakosc-porownanie-ptak>
+#figure(
+  image("../images/porownanie_008.svg", width: 100%),
+  caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0.],
+
+) <rys:jakosc-porownanie-targ>
+
 
 == Podsumowanie wyników
 
