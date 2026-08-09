@@ -2,7 +2,7 @@
 
 = Implementacja
 <implementacja>
-Prace implementacyjne objęły przekształcenie referencyjnych skryptów inferencyjnych w pakiet o sterowalnej konfiguracji oraz dodanie mechanizmów redukujących zapotrzebowanie na pamięć i czas: wymiennych wariantów mechanizmu uwagi obejmujących jądra bibliotek _SageAttention_ i _SpargeAttention_, kwantyzacji całkowitoliczbowej transformera dyfuzyjnego oraz kafelkowania przestrzennego i czasowego. Elementy zaczerpnięte z implementacji referencyjnej zaznaczono w tekście.
+Prace implementacyjne objęły przekształcenie referencyjnych skryptów inferencyjnych w pakiet o sterowalnej konfiguracji oraz dodanie mechanizmów redukujących zapotrzebowanie na pamięć i czas: wymiennych wariantów mechanizmu uwagi obejmujących jądra bibliotek _SageAttention_ i _SpargeAttention_, kwantyzacji całkowitoliczbowej transformera dyfuzyjnego oraz kafelkowania przestrzennego i czasowego. Kryteria doboru tych trzech osi omówiono w @wybór-rozwiązań-do-implementacji[rozdziale].
 
 == Wymienne warianty mechanizmu uwagi
 <wymienne-warianty-mechanizmu-uwagi>
@@ -22,7 +22,7 @@ Ponieważ kwantyzacja modyfikuje wagi nieodwracalnie, zmiana jej trybu wymaga po
 
 == Kafelkowanie przestrzenne
 <kafelkowanie-przestrzenne>
-Kafelkowanie jest wykonalne dzięki własności odziedziczonej po implementacji referencyjnej: bufory pamięci podręcznej kluczy i wartości inicjalizowane są wartością pustą na początku każdego wywołania potoku, a stan strumieniowy narasta wyłącznie wzdłuż osi czasu w obrębie jednego wywołania. Każde wywołanie stanowi więc niezależny przebieg. Fragmenty klatki można zatem przetwarzać bez współdzielenia stanu między nimi.
+Motywację dla ograniczenia rozmiaru przetwarzanego fragmentu przedstawiono w @ograniczenie-rozmiaru-przetwarzanego-fragmentu[podrozdziale]. Samo kafelkowanie jest wykonalne dzięki własności odziedziczonej po implementacji referencyjnej: bufory pamięci podręcznej kluczy i wartości inicjalizowane są wartością pustą na początku każdego wywołania potoku, a stan strumieniowy rośnie wyłącznie wzdłuż osi czasu w obrębie jednego wywołania. Każde wywołanie stanowi więc niezależny przebieg. Fragmenty klatki można zatem przetwarzać bez współdzielenia stanu między nimi.
 
 Podział klatki na kafle realizuje funkcja zwracająca listę współrzędnych obszarów wejściowych, wyznaczanych z zadanego rozmiaru kafla i szerokości zakładki. Gdy obszar wykracza poza wymiary klatki, jego brzeg jest przycinany do krawędzi, a brzeg przeciwny cofany tak, aby zachować zadany rozmiar. Zapobiega to przetwarzaniu kafli mniejszych od zadanego rozmiaru, kosztem zwiększonej zakładki przy krawędziach obrazu. Jeżeli natomiast zadany rozmiar przekracza wymiar klatki, cofnięcie nie jest możliwe i kafel zostaje zredukowany do rozmiaru obrazu.
 

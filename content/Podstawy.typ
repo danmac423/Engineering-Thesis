@@ -69,7 +69,7 @@ Połączenie zalet modeli dyfuzyjnych w przestrzeni ukrytej (LDM) oraz skalowaln
 
 Przetwarzanie w DiT rozpoczyna się od skompresowania obrazu do przestrzeni ukrytej za pomocą zamrożonego, wstępnie wytrenowanego autoenkodera (np. VAE). Na tak uzyskanej reprezentacji $z_0$ aplikowany jest proces dyfuzji, a zaszumiony wektor ukryty $z_t$ dzielony jest na siatkę płatów. Następnie są one rzutowane liniowo na sekwencję tokenów i wzbogacane o sinusoidalne osadzenia pozycyjne. Kluczową innowacją architektury DiT jest sposób wstrzykiwania informacji warunkujących, takich jak krok czasowy $t$ czy etykieta klasy $c$. Do tego celu wykorzystuje się zmodyfikowane bloki z adaptacyjną normalizacją warstwową (ang. _adaptive layer normalization_, adaLN-Zero). Zamiast standardowej normalizacji, sieć regresuje parametry skali i przesunięcia $(gamma, beta)$ oraz skalar przeskalowujący $alpha$ bezpośrednio z sumy wektorów osadzeń warunków. Po przejściu przez bloki DiT, wyjściowa sekwencja tokenów jest dekodowana liniowo i reorganizowana do pierwotnego kształtu reprezentacji ukrytej, skąd dekoder przekształca ją z powrotem do przestrzeni pikseli @peebles2023scalablediffusionmodelstransformers.
 
-Głównym wyzwaniem w adaptacji architektur DiT do zadań superrozdzielczości wideo jest potrzeba uwarunkowania procesu generatywnego nagraniem LR. W modelach VSR opartych na DiT (takich jak _FlashVSR_) sekwencja HR nie jest generowana z czystego szumu; zamiast tego do sterowania odtwarzaniem detali wykorzystuje się wideo LR. Wbudowywanie warunku realizuje się m.in. poprzez rzutowanie klatek LR za pomocą lekkiej warstwy konwolucyjnej (_Proj-In_) i dodanie tak uzyskanych cech do tokenów jako osadzenia warunkujące @Zhuang2025FlashVSRTR.
+Głównym wyzwaniem w adaptacji architektur DiT do zadań superrozdzielczości wideo jest potrzeba uwarunkowania procesu generatywnego nagraniem LR. W modelach VSR opartych na DiT (takich jak _FlashVSR_, omawiany w @model-flashvsr[podrozdziale]) sekwencja HR nie jest generowana z czystego szumu; zamiast tego do sterowania odtwarzaniem detali wykorzystuje się wideo LR. Wbudowywanie warunku realizuje się m.in. poprzez rzutowanie klatek LR za pomocą lekkiej warstwy konwolucyjnej (_Proj-In_) i dodanie tak uzyskanych cech do tokenów jako osadzenia warunkujące @Zhuang2025FlashVSRTR.
 
 == Optymalizacje mechanizmu uwagi
 <optymalizacje-mechanizmu-uwagi>
@@ -121,8 +121,8 @@ $ x_q = text("clip")(text("round")(s dot x + z), -2^(b-1), 2^(b-1)-1), quad hat(
 Kwantyzacja skalowana (w wariancie symetrycznym) zakłada symetrię przedziału wejściowego $[-alpha, alpha]$ oraz zakresu bitowego wokół zera (dla INT8 jest to $[-127, 127]$, bez wartości $-128$). Przy skali $s = (2^(b-1) - 1) / alpha$, operacje przyjmują postać:
 $ x_q = text("clip")(text("round")(s dot x), -2^(b-1)+1, 2^(b-1)-1), quad hat(x) = 1/s x_q $
 
-=== Kwantyzacja wag (Weights)
-<kwantyzacja-wag-weights>
+=== Kwantyzacja wag
+<kwantyzacja-wag>
 
 Ponieważ wagi podczas inferencji są statyczne, wyznaczanie ich parametrów kwantyzacji odbywa się w trybie offline. W tym celu stosuje się kwantyzację kanałową (ang. _per-channel_), która zachowuje dokładność modelu przy zróżnicowanych rozkładach cech pomiędzy kanałami. Zakres wartości $alpha$ i $beta$ określa się zazwyczaj za pomocą kalibracji bazującej na maksymalnej wartości (_max calibration_), przy czym zdecydowanie preferuje się wariant symetryczny, ponieważ brak współczynnika $z$ eliminuje dodatkowy narzut obliczeniowy podczas mnożenia macierzy @wu2020integerquantizationdeeplearning.
 

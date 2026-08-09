@@ -7,11 +7,11 @@ Analiza z @przeglad-istniejacych-rozwiazan[rozdziału] wykazała, że przeszkod�
 
 == Mechanizm uwagi
 <mechanizm-uwagi>
-Blokowo-rzadki mechanizm uwagi stosowany w _FlashVSR_ składa się z dwóch koncepcyjnie niezależnych elementów: jądra realizującego uwagę gęstą w wywołaniach bez maski blokowej oraz jądra realizującego uwagę rzadką, ograniczoną maską wyznaczoną na podstawie selekcji istotnych par bloków i okien lokalnych. Rozdzielenie ich w warstwie konfiguracji pozwoliło zbadać wpływ każdego z nich.
+Blokowo-rzadki mechanizm uwagi stosowany w _FlashVSR_ składa się z dwóch koncepcyjnie niezależnych elementów: jądra realizującego uwagę gęstą w wywołaniach bez maski blokowej oraz jądra realizującego uwagę rzadką, ograniczoną maską wyznaczoną na podstawie selekcji istotnych par bloków i okien lokalnych. Rozdzielenie ich w warstwie konfiguracji pozwoliło zbadać wpływ każdego z nich. Zasadę działania porównywanych dalej jąder omówiono w @optymalizacje-mechanizmu-uwagi[podrozdziale].
 
-Jako wariant odniesienia dla uwagi gęstej przyjęto mechanizm SDPA (`scaled_dot_product_attention`) biblioteki PyTorch, stosowany w oryginalnej implementacji. Na architekturze Ampere dobiera on jądro realizujące algorytm _FlashAttention_, w którym redukcja zużycia pamięci wynika wyłącznie z optymalizacji przepływu danych, bez aproksymacji. Wariantem alternatywnym jest _SageAttention_ @zhang2025sageattentionaccurate8bitattention, który działa na poziomie pojedynczego wywołania mechanizmu uwagi, a wykorzystywany przez niego format INT8 jest wspierany przez architekturę Ampere.
+Jako wariant odniesienia dla uwagi gęstej przyjęto mechanizm SDPA (`scaled_dot_product_attention`) biblioteki PyTorch, stosowany w oryginalnej implementacji. Na architekturze Ampere dobiera on jądro realizujące algorytm _FlashAttention_ (@flashattention[podrozdział]), w którym redukcja zużycia pamięci wynika wyłącznie z optymalizacji przepływu danych, bez aproksymacji. Wariantem alternatywnym jest _SageAttention_ @zhang2025sageattentionaccurate8bitattention (@sageattention[podrozdział]), który działa na poziomie pojedynczego wywołania mechanizmu uwagi, a wykorzystywany przez niego format INT8 jest wspierany przez architekturę Ampere.
 
-Wariantem odniesienia dla selekcji rzadkiej jest uwaga blokowo-rzadka autorów _FlashVSR_ @Zhuang2025FlashVSRTR. Jako alternatywę wybrano _SpargeAttention_ @zhang2025spargeattentionaccuratetrainingfreesparse, realizujące to samo zadanie w sposób adaptacyjny. Ponieważ działa w oparciu o szkielet _SageAttention_, oba warianty dają się łączyć bez konfliktów implementacyjnych.
+Wariantem odniesienia dla selekcji rzadkiej jest uwaga blokowo-rzadka autorów _FlashVSR_ @Zhuang2025FlashVSRTR, opisana w @model-flashvsr[podrozdziale]. Jako alternatywę wybrano _SpargeAttention_ @zhang2025spargeattentionaccuratetrainingfreesparse (@spargeattention[podrozdział]), realizujące to samo zadanie w sposób adaptacyjny. Ponieważ działa w oparciu o szkielet _SageAttention_, oba warianty dają się łączyć bez konfliktów implementacyjnych.
 
 Długość pamięci podręcznej kluczy i wartości oraz zasięg okna lokalnego pozostawiono na wartościach przyjętych przez autorów modelu. Udział wybieranych par bloków jest natomiast zadawany względem rozdzielczości referencyjnej autorów i przeliczany na powierzchnię faktycznie przetwarzanego fragmentu, przez co efektywna liczba wybieranych bloków zależy od rozmiaru kafla.
 
@@ -19,7 +19,7 @@ Długość pamięci podręcznej kluczy i wartości oraz zasięg okna lokalnego p
 <kwantyzacja>
 Przyjęto format INT8. Formatu FP8 nie rozważano, ponieważ architektura Ampere go nie wspiera. Odrzucono również formaty czterobitowe, takie jak NF4 czy GGUF, ponieważ są rozwijane przede wszystkim pod kątem modeli językowych. Dla INT8 architektura Ampere udostępnia dedykowane jednostki tensorowe, a literatura raportuje dokładność zbliżoną do modelu bazowego przy odpowiednim doborze mechanizmu mapowania @wu2020integerquantizationdeeplearning.
 
-Do realizacji wybrano bibliotekę torchao, która działa przez podmianę tensorów wag na wyspecjalizowane podtypy, nie wymagając modyfikacji definicji modelu ani eksportu do reprezentacji pośredniej. Kwantyzację można więc włączyć jako opcjonalny krok inicjalizacji potoku.
+Do realizacji wybrano bibliotekę torchao, która działa przez podmianę tensorów wag na wyspecjalizowane podtypy, nie wymagając modyfikacji definicji modelu ani eksportu do reprezentacji pośredniej. Kwantyzację można więc włączyć jako opcjonalny krok inicjalizacji potoku. Zbadano dwa jej warianty, odpowiadające podziałowi z podrozdziałów @kwantyzacja-wag[] i @kwantyzacja-aktywacji[]: kwantyzację wyłącznie wag oraz kwantyzację wag i aktywacji.
 
 Kwantyzacji poddano wyłącznie transformer dyfuzyjny, który odpowiada za zdecydowaną większość parametrów modelu i jest wywoływany dla każdego przetwarzanego fragmentu.
 
@@ -27,9 +27,9 @@ Kwantyzacji poddano wyłącznie transformer dyfuzyjny, który odpowiada za zdecy
 <ograniczenie-rozmiaru-przetwarzanego-fragmentu>
 Zapotrzebowanie na pamięć w obrębie pojedynczego wywołania modelu zależy od liczby tokenów czasoprzestrzennych, a więc od rozdzielczości przetwarzanego fragmentu. Podział klatki na kafle przetwarzane kolejno sprawia, że szczytowe zużycie pamięci przestaje zależeć od rozdzielczości nagrania wejściowego, a zaczyna zależeć wyłącznie od rozmiaru kafla.
 
-Kosztem są: redundancja obliczeń w obszarze zakładki, ryzyko widocznych nieciągłości na granicach kafli rekonstruowanych niezależnie oraz zmiana efektywnej rzadkości uwagi wraz z rozmiarem kafla. Przyjęto przetwarzanie z zakładką; sposób łączenia kafli opisano w @kafelkowanie-przestrzenne[podrozdziale].
+Kosztem są redundancja obliczeń w obszarze zakładki, ryzyko widocznych nieciągłości na granicach kafli rekonstruowanych niezależnie oraz zmiana efektywnej rzadkości uwagi wraz z rozmiarem kafla. Przyjęto przetwarzanie z zakładką; sposób łączenia kafli opisano w @kafelkowanie-przestrzenne[podrozdziale].
 
-Analogiczny mechanizm zastosowano w wymiarze czasowym. Mimo strumieniowego trybu pracy modelu bufory wejściowe i wyjściowe długich nagrań pozostają kosztowne pamięciowo, sekwencję dzielono zatem na segmenty o ustalonej długości.
+Analogiczny mechanizm zastosowano w wymiarze czasowym. Mimo strumieniowego trybu pracy modelu bufory wejściowe i wyjściowe długich nagrań pozostają kosztowne pamięciowo, sekwencję dzielono zatem na segmenty o ustalonej długości. Realizację tego podziału opisano w @kafelkowanie-czasowe[podrozdziale].
 
 == Podsumowanie
 <podsumowanie>

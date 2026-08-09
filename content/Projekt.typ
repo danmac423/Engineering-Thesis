@@ -5,9 +5,9 @@
 
 == Platforma sprzętowa
 <platforma-sprzętowa>
-Badania zrealizowano na dwóch stanowiskach sprzętowych o odmiennych rolach. Główną platformą docelową była karta NVIDIA GeForce RTX 3080 (10 GB VRAM, architektura Ampere, compute capability 8.6) zainstalowana w komputerze z procesorem AMD Ryzen 5 5600X oraz 32 GB pamięci RAM - pojemność RAM ma  kluczowe znaczenie, gdyż trafiają do niej wyniki pośrednie. Wybrane GPU reprezentuje segment kart konsumenckich, dla których domyślne zapotrzebowanie FlashVSR przekracza dostępny budżet pamięci.
+Badania zrealizowano na dwóch stanowiskach sprzętowych o odmiennych rolach. Główną platformą docelową była karta NVIDIA GeForce RTX 3080 (10 GB VRAM, architektura Ampere, compute capability 8.6) zainstalowana w komputerze z procesorem AMD Ryzen 5 5600X oraz 32 GB pamięci RAM - pojemność RAM ma kluczowe znaczenie, gdyż trafiają do niej wyniki pośrednie. Wybrane GPU reprezentuje segment kart konsumenckich, dla których domyślne zapotrzebowanie FlashVSR przekracza dostępny budżet pamięci.
 
-Pomocniczo wykorzystano akcelerator NVIDIA A100, wyposażony w 80 GB pamięci. Uruchomiono na nim konfigurację referencyjną, - przestrzennego, której zapotrzebowanie na pamięć przekracza budżet karty docelowej. Podział zadań między obie platformy oraz wynikające z niego zastrzeżenia opisano w @metodyka-badan-i-testy[rozdziale].
+Pomocniczo wykorzystano akcelerator NVIDIA A100, wyposażony w 80 GB pamięci. Uruchomiono na nim konfigurację bazową, czyli wariant bez kafelkowania przestrzennego, którego zapotrzebowanie na pamięć przekracza budżet karty docelowej. Podział zadań między obie platformy opisano w @procedura-pomiaru-wydajnosci[podrozdziale].
 
 == Środowisko programistyczne
 <środowisko-programistyczne>
@@ -29,14 +29,14 @@ Istotnym założeniem projektowym jest oddzielenie budowy potoku od jego wykonan
 
 == Przepływ przetwarzania
 <przepływ-przetwarzania>
-Przebieg przetwarzania nagrania przedstawiono na @rys:przeplyw[rysunku]. Sekwencja wejściowa dzielona jest najpierw na segmenty czasowe, a każdy segment na kafle przestrzenne, dzięki czemu właściwa inferencja wykonywana jest zawsze na pojedynczym kaflu. Mechanizmy realizujące poszczególne etapy opisano w @implementacja[rozdziale].
+Przebieg przetwarzania nagrania przedstawiono na @rys:przeplyw[rysunku]. Sekwencja wejściowa dzielona jest najpierw na segmenty czasowe, a każdy segment na kafle przestrzenne, dzięki czemu właściwa inferencja wykonywana jest zawsze na pojedynczym kaflu.
 
 #figure(
   image("../images/rys_przeplyw_przetwarzania.svg", width: 50%),
   caption: [Przepływ przetwarzania nagrania w zaimplementowanym potoku],
 ) <rys:przeplyw>
 
-Przetwarzanie nagrania przebiega w kilku etapach: dekodowanie materiału wejściowego, podział na segmenty czasowe dopełnienie liczby klatek, podział każdego segmentu na kafle przestrzenne, inferencja, złożenie wyników i zapis. Mechanizmy realizujące poszczególne etapy opisano w @implementacja[rozdziale].
+Przetwarzanie nagrania przebiega w kilku etapach: dekodowanie materiału wejściowego, podział na segmenty czasowe i dopełnienie liczby klatek, podział każdego segmentu na kafle przestrzenne, inferencja, złożenie wyników i zapis. Podział czasowy opisano w @kafelkowanie-czasowe[podrozdziale], podział na kafle przestrzenne i sposób ich łączenia w @kafelkowanie-przestrzenne[podrozdziale], a warianty mechanizmu uwagi i kwantyzacji w @wymienne-warianty-mechanizmu-uwagi[podrozdziałach] i @integracja-kwantyzacji[].
 
 Kluczową decyzją projektową jest przenoszenie wyniku każdego kafla poza pamięć karty graficznej bezpośrednio po jego przetworzeniu. Na karcie znajdują się jednocześnie wyłącznie wagi modelu, pamięć podręczna kluczy i wartości oraz aktywacje jednego kafla, natomiast płótna akumulacyjne obejmujące jeden segment czasowy utrzymywane są w pamięci operacyjnej.
 

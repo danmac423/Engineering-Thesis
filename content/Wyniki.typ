@@ -1,8 +1,10 @@
 #import "../utils.typ": flex-caption, silentheading, todo
 
 = Wyniki i ich omówienie
+<wyniki-i-ich-omowienie>
 
 == Wpływ mechanizmu uwagi i kwantyzacji
+<wplyw-mechanizmu-uwagi-i-kwantyzacji>
 
 Wyniki eksperymentu E1 zestawiono w @tab:e1[tabeli], a zmiany względem konfiguracji odniesienia w @tab:e1-delty[tabeli]. Wszystkie konfiguracje zmierzono przy kaflu 192 $times$ 192 i rozdzielczości wejściowej 192 $times$ 352, dla 101 klatek.
 
@@ -80,6 +82,7 @@ Kwantyzacja obniża zużycie pamięci i wydłuża czas. Kwantyzacja samych wag z
 Efekty tych osi łączą się. Najniższy szczyt w całym zestawieniu, 8112 MiB, osiąga konfiguracja łącząca _SpargeAttention_ z kwantyzacją wag i aktywacji. Jest to o 11,0% mniej niż w konfiguracji odniesienia, przy czasie dłuższym o 15,7%. Na uwagę zasługuje jednak inna konfiguracja. _SpargeAttention_ z kwantyzacją samych wag daje szczyt 8766 MiB i czas 24,22 s. Jest więc jednocześnie oszczędniejsza pamięciowo i o 9,9% szybsza od konfiguracji wyjściowej. To jedyny badany wariant poprawiający obie mierzone wielkości naraz.
 
 == Wpływ rozmiaru kafla
+<wplyw-rozmiaru-kafla>
 
 Wyniki eksperymentu E2 zestawiono w @tab:e2[tabeli]. Pomiary wykonano przy rozdzielczości wejściowej 256 $times$ 448 i zakładce 24 pikseli. Kolumna redundancji podaje stosunek łącznej powierzchni przetworzonych kafli do powierzchni klatki.
 
@@ -111,13 +114,14 @@ Wyniki eksperymentu E2 zestawiono w @tab:e2[tabeli]. Pomiary wykonano przy rozdz
 
 Szczytowe zużycie pamięci rośnie monotonicznie wraz z rozmiarem kafla, zgodnie z założeniem przyjętym w @ograniczenie-rozmiaru-przetwarzanego-fragmentu[podrozdziale]. Czas inferencji zachowuje się natomiast niemonotonicznie. Kafel 160 daje wynik 72,8 s, natomiast kafle 128 i 192 dają odpowiednio 81,3 s i 81,6 s.
 
-Na czas wpływają dwa czynniki o zbliżonej wadze. Pierwszym jest redundancja obliczeń w obszarach zakładek, wynosząca 2,14 dla kafla 128, 1,79 dla kafla 160 i 1,93 dla kafla 192. Drugim jest koszt jednostkowy, rosnący wraz z powierzchnią kafla od $3","31 dot 10^(-4)$ s na piksel dla kafla 128 do $3","69 dot 10^(-4)$ s dla kafla 192. Czynniki te przy kaflach 128 i 192 niemal dokładnie się znoszą: pierwszy przetwarza 1,11 raza większą powierzchnię, lecz kosztuje 0,90 raza mniej na piksel. Kafel 160 wygrywa, ponieważ łączy najniższą redundancję z umiarkowanym kosztem jednostkowym.
+Na czas wpływają dwa czynniki o zbliżonej wadze. Pierwszym jest redundancja obliczeń w obszarach zakładek, wynosząca 2,14 dla kafla 128, 1,79 dla kafla 160 i 1,93 dla kafla 192. Drugim jest koszt jednostkowy, rosnący wraz z powierzchnią kafla od $3","31 dot 10^(-4)$ s na piksel dla kafla 128 do $3","69 dot 10^(-4)$ s dla kafla 192. Czynniki te przy kaflach 128 i 192 niemal dokładnie się znoszą: pierwszy przetwarza 1,11 raza większą powierzchnię, lecz kosztuje o 10% mniej na piksel.
 
 Redundancja nie zmienia się monotonicznie wraz z rozmiarem kafla, lecz zależy od tego, jak siatka kafli dzieli klatkę. Gdy kafel nie mieści się w klatce, jego początek przesuwany jest wstecz, zgodnie z mechanizmem opisanym w @kafelkowanie-przestrzenne[podrozdziale], co przy rozmiarach źle dopasowanych do jej wymiarów prowadzi do bardzo szerokich zakładek. Widać to na przykładzie kafla 224, który daje tę samą liczbę kafli co kafel 192, przy większej powierzchni każdego z nich, przez co jego redundancja sięga 2,62.
 
 Dobór rozmiaru kafla wymaga zatem uwzględnienia obu czynników, przy czym redundancję można wyznaczyć z samej geometrii podziału, bez uruchamiania modelu. Uzyskane wartości odnoszą się przy tym wyłącznie do rozdzielczości 256 $times$ 448 i przy innej rozdzielczości korzystny okaże się inny rozmiar.
 
 == Granica wykonalności
+<granica-wykonalnosci>
 
 Konfiguracja bazowa kończy się na karcie docelowej przepełnieniem pamięci przy rozdzielczości 192 $times$ 352 oraz 256 $times$ 448. W obu przypadkach awaria następuje w pierwszym kroku odszumiania, w funkcji aktywacji wewnątrz bloku transformera. Modelu w postaci udostępnionej przez autorów nie da się zatem uruchomić na karcie konsumenckiej nawet w scenariuszu, dla którego autorzy podają wyniki wydajnościowe.
 
@@ -148,9 +152,9 @@ Skalę zapotrzebowania określono na akceleratorze A100, gdzie obie konfiguracje
 
 Pomiary na akceleratorze A100 pozwalają określić skalę deficytu. Przy rozdzielczości autorów zapotrzebowanie wynosi 14 844 MiB, przy rozdzielczości bliższej typowym nagraniom rośnie do 23 512 MiB. Wartości te przekraczają pojemność karty docelowej odpowiednio około półtorakrotnie i blisko dwuipółkrotnie. Deficyt jest zatem na tyle duży, że nie dałoby się go pokryć samą kwantyzacją ani optymalizacją mechanizmu uwagi, których łączny efekt zmierzony w eksperymencie E1 nie przekracza 11%.
 
-Zmierzona wartość 14 844 MiB jest wyższa od 11,13 GB raportowanych przez autorów dla tej samej rozdzielczości. Rozbieżność odpowiada stosunkowi między pamięcią zarezerwowaną przez alokator a sumą rozmiarów żywych tensorów, obserwowanemu w niniejszej pracy na poziomie od 1,2 do 1,3, co sugeruje, że autorzy podają tę drugą wielkość. Przyjęta tu miara jest ostrożniejsza, ponieważ o wystąpieniu przepełnienia decyduje rozmiar puli zarezerwowanej.
+Zmierzona wartość 14 844 MiB jest wyższa od 11,13 GB raportowanych przez autorów dla tej samej rozdzielczości. Rozbieżność wynika najpewniej z przyjętej miary zużycia pamięci, omówionej w @wydajnosc[podrozdziale]. Przyjęta tu miara jest ostrożniejsza, ponieważ o wystąpieniu przepełnienia decyduje rozmiar puli zarezerwowanej.
 
-Kafelkowanie przestrzenne uniezależnia szczytowe zużycie pamięci od rozdzielczości nagrania. Potwierdzają to wyniki eksperymentów E1 i E2. Przy kaflu 192 $times$ 192 szczyt wynosi 9110 MiB dla wejścia 192 $times$ 352 i 9292 MiB dla wejścia 256 $times$ 448, mimo że powierzchnia klatki rośnie o 70%. Różnica mieści się w rozrzucie obserwowanym między powtórzeniami tej samej konfiguracji. Dla porównania, ta sama zmiana rozdzielczości podnosi szczyt o 8668 MiB.
+Kafelkowanie przestrzenne uniezależnia szczytowe zużycie pamięci od rozdzielczości nagrania. Potwierdzają to wyniki eksperymentów E1 i E2. Przy kaflu 192 $times$ 192 szczyt wynosi 9110 MiB dla wejścia 192 $times$ 352 i 9292 MiB dla wejścia 256 $times$ 448, mimo że powierzchnia klatki rośnie o 70%. Różnica mieści się w rozrzucie obserwowanym między powtórzeniami tej samej konfiguracji. Dla porównania, ta sama zmiana rozdzielczości podnosi szczyt konfiguracji bazowej o 8668 MiB (@tab:referencja[tabela]).
 
 Same techniki obliczeniowe przesuwają natomiast granicę wykonalności o jeden krok siatki rozmiarów kafla, co przedstawiono w @tab:granica[tabeli].
 
@@ -249,7 +253,7 @@ Wyniki eksperymentu E3 dla zbioru YouHQ40 zestawiono w @tab:jakosc-youhq40[tabel
     )],
 ) <tab:jakosc-youhq40-delty>
 
-Utrata jakości przypada niemal wyłącznie na wprowadzenie kafelkowania przestrzennego. Na tę jedną zmianę przypada cała zmiana wartości PSNR, 97% zmiany LPIPS, 94% zmiany CLIPIQA, 80% zmiany DOVER i 75% zmiany MUSIQ. Trzy kolejne podmiany, obejmujące jądro uwagi gęstej, selekcję rzadką oraz kwantyzację wag i aktywacji, zmieniają metryki pełnoreferencyjne nieznacznie. Wyjątkiem jest spadek MUSIQ o 0,47 przy _SpargeAttention_, wyraźny na tle pozostałych podmian, choć blisko trzykrotnie mniejszy od spadku spowodowanego kafelkowaniem.
+Utrata jakości przypada niemal wyłącznie na wprowadzenie kafelkowania przestrzennego. Na tę jedną zmianę przypada cała zmiana wartości PSNR, 94% zmiany LPIPS, 94% zmiany CLIPIQA, 80% zmiany DOVER i 75% zmiany MUSIQ. Trzy kolejne podmiany, obejmujące jądro uwagi gęstej, selekcję rzadką oraz kwantyzację wag i aktywacji, zmieniają metryki nieznacznie. Wyjątkiem jest spadek MUSIQ o 0,47 przy _SpargeAttention_, wyraźny na tle pozostałych podmian, choć blisko trzykrotnie mniejszy od spadku spowodowanego kafelkowaniem.
 
 Badane optymalizacje obliczeniowe są zatem w przybliżeniu neutralne jakościowo, a kompromis między jakością a zużyciem pamięci sprowadza się do decyzji o podziale klatki na kafle. W szczególności kwantyzacja wag i aktywacji, redukująca szczyt zużycia pamięci o blisko 1 GiB, nie pogarsza rekonstrukcji w stopniu mierzalnym przyjętym zestawem metryk.
 
@@ -336,7 +340,7 @@ Wyniki dla zbioru VideoLQ, zawierającego nagrania o degradacjach rzeczywistych,
 
 Zbiór VideoLQ powtarza zaobserwowaną zależność. Na wprowadzenie kafelkowania przypada od 86% do 98% zmiany każdej z metryk, a trzy kolejne podmiany mieszczą się w przedziale 0,04 w skali MUSIQ. Wniosek o neutralności jakościowej optymalizacji obliczeniowych przenosi się zatem na nagrania rzeczywiste.
 
-Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedstawiono na rysunkach @rys:jakosc-porownanie-ptak[] i @rys:jakosc-porownanie-targ[]. Kolumny przedstawiają materiał wejściowy oraz trzy wybrane konfiguracje z tabeli 12: bazową, bazową z kafelkowaniem oraz konfigurację ze wszystkimi optymalizacjami. W obu przypadkach wyniki pozostają nierozróżnialne, co potwierdza wniosek o neutralności jakościowej optymalizacji obliczeniowych.
+Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedstawiono na rysunkach @rys:jakosc-porownanie-ptak[] i @rys:jakosc-porownanie-targ[]. Kolumny przedstawiają materiał wejściowy oraz trzy wybrane konfiguracje z @tab:jakosc-videolq[tabeli]: bazową, bazową z kafelkowaniem oraz konfigurację ze wszystkimi optymalizacjami. W obu przypadkach wyniki pozostają nierozróżnialne, co potwierdza wniosek o neutralności jakościowej optymalizacji obliczeniowych.
 
 #figure(
   image("../images/porownanie_006.svg", width: 100%),
@@ -349,5 +353,6 @@ Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedsta
 
 
 == Podsumowanie wyników
+<podsumowanie-wynikow>
 
 Trzy badane osie optymalizacji okazały się pełnić odmienne role. Kafelkowanie przestrzenne decyduje o wykonalności, ponieważ jako jedyne uniezależnia szczytowe zużycie pamięci od rozdzielczości nagrania. Ponosi też cały mierzalny koszt jakościowy. Selekcja rzadka oddziałuje przede wszystkim na czas inferencji, skracając go o blisko 13% przy niemal niezmienionych metrykach. Kwantyzacja oddziałuje na pamięć, obniżając szczyt o 898 MiB w wariancie obejmującym aktywacje. Kafelkowanie decyduje więc o wykonalności, a pozostałe dwie osie o kompromisie między czasem a zapasem pamięci w konfiguracji już wykonalnej.
