@@ -23,10 +23,11 @@ Realizacja tego celu wymagała refaktoryzacji kodu referencyjnej implementacji d
 
 Zakres pracy ogranicza się do fazy inferencji. Nie przeprowadzono treningu ani dostrajania, a we wszystkich eksperymentach wykorzystano publicznie udostępnione wagi. Wkład pracy ma charakter inżynieryjno-eksperymentalny i polega na adaptacji istniejącego modelu do środowiska o ograniczonych zasobach i zbadaniu zależności między jakością rekonstrukcji, czasem inferencji a zużyciem pamięci.
 
-Kod źródłowy pakietu wraz z narzędziami pomiarowymi udostępniono publicznie pod adresem #link("https://github.com/danmac423/FlashVSR/tree/main")
-
-
 == Struktura pracy
 <struktura-pracy>
 
-#todo[Opisać strukturę pracy.]
+Praca składa się z dziewięciu rozdziałów. Rozdział drugi wprowadza podstawy teoretyczne: sformułowanie zadania superrozdzielczości wideo, zasadę działania modeli dyfuzyjnych, architektury transformera wizyjnego i dyfuzyjnego, optymalizacje mechanizmu uwagi, kwantyzację całkowitoliczbową oraz metryki oceny jakości. W trzecim omówiono istniejące metody VSR, ze szczególnym uwzględnieniem modelu _FlashVSR_. Czwarty przedstawia kryteria doboru oraz uzasadnienie wyboru trzech osi optymalizacji: mechanizmu uwagi, kwantyzacji i ograniczenia rozmiaru przetwarzanego fragmentu.
+
+Kolejne dwa rozdziały dotyczą części praktycznej. Piąty opisuje środowisko sprzętowe i programistyczne oraz projekt systemu, a szósty implementację poszczególnych mechanizmów i aplikacji pokazowej.
+
+Rozdział siódmy przedstawia metodykę badań: pytania badawcze, zbiory testowe, metryki, procedurę pomiarową i plan eksperymentów. W ósmym zebrano i omówiono uzyskane wyniki, a dziewiąty zawiera podsumowanie, wnioski badawcze oraz ograniczenia i kierunki dalszych prac.
