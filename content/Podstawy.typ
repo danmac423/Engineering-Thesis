@@ -27,7 +27,7 @@ $
   hat(I)_(i)^("SR") = f_("VSR")(I_i^("LR"), {I_j^("LR")}^(i+N)_(j=i-N)\;theta_(f_("VSR")))
 $<vsr_eq>
 
-Odwrócenie to nie ma jednoznacznego rozwiązania. Degradacja bezpowrotnie usuwa część informacji, przez co wielu różnym sekwencjom HR odpowiada ta sama sekwencja LR. Model nie odtwarza więc oryginału, lecz wskazuje jedno z potencjalnych rozwiązań.
+Odwrócenie to nie ma jednoznacznego rozwiązania. Degradacja $phi.alt$ bezpowrotnie usuwa część informacji i nie jest odwracalna, ponieważ jednej sekwencji LR odpowiada wiele różnych sekwencji HR. Model nie odtwarza więc oryginału, lecz wskazuje jedno z potencjalnych rozwiązań.
 
 Powyższe klasyczne sformułowania zakładają uproszczone, deterministyczne zniekształcenia, które nie odzwierciedlają warunków rzeczywistych. W praktyce proces utraty jakości wymaga zaawansowanych modeli degradacji, które łączą losowe rozmycia, szum oraz zmianę rozmiaru i artefakty kompresji @chan2021investigatingtradeoffsrealworldvideo.
 
