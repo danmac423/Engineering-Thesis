@@ -29,20 +29,20 @@ Istotnym założeniem projektowym jest oddzielenie budowy potoku od jego wykonan
 
 == Przepływ przetwarzania
 <przepływ-przetwarzania>
-Przebieg przetwarzania nagrania przedstawiono na @rys:przeplyw[rysunku]. Sekwencja wejściowa dzielona jest najpierw na segmenty czasowe, a każdy segment na kafle przestrzenne, dzięki czemu właściwa inferencja wykonywana jest zawsze na pojedynczym kaflu.
+Przebieg przetwarzania nagrania przedstawiono na @rys:przeplyw[rysunku]. Podział na segmenty czasowe i kafle przestrzenne sprawia, że właściwa inferencja wykonywana jest zawsze na pojedynczym kaflu, niezależnie od długości i rozdzielczości nagrania wejściowego.
 
 #figure(
   image("../images/rys_przeplyw_przetwarzania.svg", width: 50%),
   caption: [Przepływ przetwarzania nagrania w zaimplementowanym potoku],
 ) <rys:przeplyw>
 
-Przetwarzanie nagrania przebiega w kilku etapach. Materiał wejściowy jest najpierw dekodowany, a uzyskana sekwencja klatek dzielona na segmenty czasowe o zadanej długości. Ponieważ długość segmentu musi spełniać zależność wynikającą z przyczynowej kompresji czasowej autoenkodera, zbyt krótki segment jest dopełniany powieleniem ostatniej klatki, a klatki nadmiarowe odrzucane po zakończeniu przetwarzania. Mechanizm podziału czasowego omówiono w @kafelkowanie-czasowe[podrozdziale].
+Materiał wejściowy jest najpierw dekodowany, a uzyskana sekwencja klatek dzielona na segmenty czasowe o zadanej długości. Długość segmentu musi spełniać zależność wynikającą z przyczynowej kompresji czasowej autoenkodera, dlatego zbyt krótki segment jest dopełniany powieleniem ostatniej klatki, a nadmiarowe klatki odrzucane po zakończeniu przetwarzania. Mechanizm podziału czasowego omówiono w @kafelkowanie-czasowe[podrozdziale].
 
 Każdy segment dzielony jest następnie na kafle przestrzenne, przetwarzane kolejno, niezależnie od siebie. Przed inferencją kafel jest skalowany do rozdzielczości docelowej i dopełniany do wymiarów wymaganych przez podział na łaty, a po jej zakończeniu dopełnienie zostaje usunięte. Gotowe kafle składane są w pełną klatkę przez ważone sumowanie w obszarach nakładania. Podział na kafle oraz sposób ich łączenia opisano w @kafelkowanie-przestrzenne[podrozdziale].
 
-Sama inferencja obejmuje przejście przez transformer dyfuzyjny oraz dekodowanie wyniku do przestrzeni pikseli. To na tym etapie zastosowanie znajdują wymienne warianty mechanizmu uwagi oraz kwantyzacja, przedstawione odpowiednio w @wymienne-warianty-mechanizmu-uwagi[podrozdziale] i @integracja-kwantyzacji[podrozdziale]. Wynik przetworzonego segmentu zapisywany jest przyrostowo, a klatki z obszaru zakładki łączone są z segmentem poprzednim.
+Sama inferencja obejmuje przejście przez transformer dyfuzyjny oraz dekodowanie wyniku do przestrzeni pikseli. To na tym etapie zostały zastosowane wymienne warianty mechanizmu uwagi oraz kwantyzacja, przedstawione odpowiednio w @wymienne-warianty-mechanizmu-uwagi[podrozdziale] i @integracja-kwantyzacji[podrozdziale].
 
-Kluczową decyzją projektową jest przenoszenie wyniku każdego kafla poza pamięć karty graficznej bezpośrednio po jego przetworzeniu. Na karcie znajdują się jednocześnie wyłącznie wagi modelu, pamięć podręczna kluczy i wartości oraz aktywacje jednego kafla, natomiast płótna akumulacyjne obejmujące jeden segment czasowy utrzymywane są w pamięci operacyjnej.
+Złożony segment zapisywany jest przyrostowo, a klatki z obszaru zakładki łączone są z segmentem poprzednim. Kluczową decyzją projektową jest przy tym przenoszenie wyniku każdego kafla poza pamięć karty graficznej bezpośrednio po jego przetworzeniu. Na karcie znajdują się jednocześnie wyłącznie wagi modelu, pamięć podręczna kluczy i wartości oraz aktywacje jednego kafla, natomiast płótna akumulacyjne obejmujące jeden segment czasowy utrzymywane są w pamięci operacyjnej.
 
 
 == Interfejsy systemu
