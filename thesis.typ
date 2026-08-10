@@ -69,32 +69,11 @@
     abstract: (
       en: [
         // max 1 page
-        Diffusion-based video super-resolution (VSR) models produce sharper and
-        more natural images than conventional methods, but their high
-        computational cost remains a limitation. Although one-step models such as
-        _FlashVSR_ @Zhuang2025FlashVSRTR eliminate the overhead of iterative denoising, they still
-        require a large amount of memory. The model was designed with
-        server-class hardware in mind, which makes running it on standard
-        consumer graphics cards practically infeasible due to insufficient VRAM.
+        Diffusion-based video super-resolution (VSR) models produce sharper and more natural images than conventional methods, but their high computational cost remains a limitation. Although one-step models such as _FlashVSR_ @Zhuang2025FlashVSRTR eliminate the overhead of iterative denoising, they still require a large amount of memory. The model was designed with server-class hardware in mind, which makes running it on standard consumer graphics cards practically infeasible due to insufficient VRAM.
 
-        The aim of this thesis was to adapt _FlashVSR_ to run on a graphics card
-        equipped with 10 GB of VRAM while maintaining acceptable reconstruction
-        quality and processing time. To this end, the reference implementation
-        was refactored into a modular package and three main optimisation axes
-        were implemented: spatial and temporal tiling, integer quantisation of
-        the diffusion transformer, and interchangeable attention kernels. The
-        performance and quality of the optimised pipeline were evaluated on
-        footage with both synthetic and real-world degradations.
+        The aim of this work was to adapt the _FlashVSR_ model to run on a graphics card equipped with 10 GB of VRAM, while maintaining acceptable reconstruction quality and processing time. To this end, the reference implementation was refactored into a modular package and three main optimization axes were implemented: spatial and temporal tiling, integer quantization of the diffusion transformer, and interchangeable attention kernels. The performance and quality of the optimized pipeline were evaluated on footage with both synthetic and real-world degradations.
 
-        The experiments showed that spatial tiling is the key prerequisite for
-        running the model on resource-constrained hardware, as it is the only
-        technique that makes peak memory usage independent of the input
-        resolution. Replacing the block-sparse attention variant, in turn,
-        noticeably shortened inference time. Quantization allowed a further
-        reduction in memory usage, although at the cost of longer processing.
-        Importantly, the observed decrease in output quality was almost entirely
-        attributable to tiling, whereas the computational optimisations proved
-        practically neutral with respect to reconstruction quality.
+        The experiments showed that spatial tiling is the key prerequisite for running the model on resource-constrained hardware, as it is the only technique that makes peak memory usage independent of the input resolution. Replacing the block-sparse attention variant, in turn, noticeably shortened inference time. Quantization allowed a further reduction in memory usage, although at the cost of longer processing. Importantly, the observed decrease in output quality was almost entirely attributable to tiling, whereas the computational optimizations proved practically neutral with respect to reconstruction quality.
       ],
       pl: [
         Modele superrozdzielczości wideo (VSR) oparte na dyfuzji generują bardziej naturalne i ostre obrazy niż klasyczne metody, jednak ich ograniczeniem pozostaje bardzo wysoki koszt obliczeniowy. Choć modele jednokrokowe, takie jak _FlashVSR_ @Zhuang2025FlashVSRTR, eliminują narzut iteracyjnego odszumiania, nadal wymagają ogromnej ilości pamięci. Model ten projektowano z myślą o sprzęcie klasy serwerowej, dlatego jego uruchomienie na standardowych, konsumenckich kartach graficznych jest praktycznie niemożliwe ze względu na deficyt pamięci VRAM.
