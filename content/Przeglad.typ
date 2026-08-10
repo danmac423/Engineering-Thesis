@@ -7,15 +7,15 @@
 
 Metody konwolucyjne realizują zadanie VSR poprzez podział wideo na nakładające się na siebie segmenty, co umożliwia równoległe przetwarzanie sąsiednich klatek w celu rekonstrukcji klatki docelowej. Reprezentatywny dla tej klasy model _EDVR_ @wang2019edvrvideorestorationenhanced wykorzystuje konwolucje deformowalne do adaptacyjnego dopasowania cech przy złożonym ruchu, oraz moduł TSA (_Temporal and Spatial Attention_) do fuzji informacji. Architektury konwolucyjne cechują się dużą stabilnością uczenia i odpornością na dynamiczne zmiany w scenie. Cierpią jednak na ograniczony zasięg kontekstu czasowego oraz wysoki narzut pamięciowy wynikający z wielokrotnego przetwarzania tych samych klatek. Ponadto niezależna rekonstrukcja kolejnych okien sprzyja powstawaniu artefaktów @Baniya_2024 @liu2022videosuperresolutionbased.
 
-Metody rekurencyjne (RNN) traktują wideo jako ciągły strumień danych i przekazują ukryty stan pamięci pomiędzy kolejnymi krokami czasowymi, co pozwala na modelowanie długoterminowych zależności.
-W modelu _BasicVSR_ @chan2021basicvsrsearchessentialcomponents zastosowano dwukierunkową propagację danych w czasie oraz moduł wyrównywania cech oparty na przepływie optycznym (ang. _optical flow_), który wyrównuje cechy przed przekazaniem ich do bloku rezydualnego. Pozwala to sieci na efektywne uwzględnianie informacji z całej sekwencji. Główną wadą dwukierunkowych metod rekurencyjnych pozostaje jednak wymóg znajomości całego wideo z góry oraz ryzyko stopniowego kumulowania i propagowania błędów rekonstrukcji @Baniya_2024 @liu2022videosuperresolutionbased.
+Metody rekurencyjne traktują wideo jako ciągły strumień danych i przekazują ukryty stan pamięci pomiędzy kolejnymi krokami czasowymi, co pozwala na modelowanie długoterminowych zależności.
+W modelu _BasicVSR_ @chan2021basicvsrsearchessentialcomponents zastosowano dwukierunkową propagację danych w czasie oraz moduł wyrównywania cech oparty na przepływie optycznym (ang. _optical flow_), który wyrównuje cechy przed przekazaniem ich do bloku rezydualnego. Pozwala to sieci na efektywne uwzględnianie informacji z całej sekwencji. Główną wadą dwukierunkowych metod rekurencyjnych pozostaje jednak wymóg dostępności całej sekwencji wideo przed rozpoczęciem przetwarzania oraz ryzyko stopniowego kumulowania i propagowania błędów rekonstrukcji @Baniya_2024 @liu2022videosuperresolutionbased.
 
 == Metody oparte na transformerach
 <metody-oparte-na-transformerach>
 
 Transformery w VSR wykorzystują mechanizmy samouwagi (ang. _self-attention_) do dynamicznego ważenia i modelowania relacji czasowych wzdłuż całej sekwencji @Baniya_2024. Przykładowo, model _VSRT_ @cao2023videosuperresolutiontransformer posiada moduł STCSA (_Spatial-Temporal Convolutional Self-Attention_) do ekstrakcji lokalnych cech przestrzennych oraz dwukierunkową warstwę BOFF (_Bidirectional Optical Flow-Based Feed-Forward_), opartą na przepływie optycznym, do wyrównywania cech między klatkami. Alternatywne podejście reprezentuje _VRT_ @liang2022vrtvideorestorationtransformer, który zamiast przetwarzać klipy sekwencyjnie, rekonstruuje je równoległe. Wykorzystuje on moduł TMSA (_Temporal Mutual Self-Attention_) do jednoczesnej estymacji ruchu, wyrównywania i fuzji cech.
 
-Kluczową zaletą metod opartych na transformerach jest ich zdolność do bezstratnego wychwytywania długoterminowych zależności czasowych oraz możliwość równoległego przetwarzania klatek, co pozwala wyeliminować wąskie gardło rekurencji @liang2022vrtvideorestorationtransformer. Głównym ograniczeniem pozostaje jednak bardzo wysoka złożoność obliczeniowa i ogromne zapotrzebowanie na pamięć w porównaniu z klasycznymi sieciami CNN @Baniya_2024.
+Kluczową zaletą metod opartych na transformerach jest ich zdolność do bezstratnego wychwytywania długoterminowych zależności czasowych oraz możliwość równoległego przetwarzania klatek, co pozwala wyeliminować wąskie gardło rekurencji @liang2022vrtvideorestorationtransformer. Głównym ograniczeniem pozostaje jednak bardzo wysoka złożoność obliczeniowa i ogromne zapotrzebowanie na pamięć w porównaniu z klasycznymi sieciami konwolucyjnymi @Baniya_2024.
 
 == Metody dyfuzyjne
 <metody-dyfuzyjne>
@@ -24,12 +24,12 @@ Modele dyfuzyjne, których zasadę działania przedstawiono w @modele-dyfuzyjne[
 
 W odpowiedzi na ten problem rozwinięto metody jednokrokowe (ang. _one-step_), które skracają cały proces generatywny do pojedynczego przejścia sieci (ang. _forward pass_). Przykładowo, model _DOVE_ @chen2025doveefficientonestepdiffusion dostraja wcześniej wyszkolony, zaawansowany model dyfuzyjny _CogVideoX_ poprzez dwuetapową strategię uczenia _latent-pixel_, aby minimalizować różnice między ukrytymi reprezentacjami klatek przewidywanych i HR. Z kolei architektura _SeedVR2_ @wang2026seedvr2onestepvideorestoration wykorzystuje doszkalanie adwersarialne (ang. _Diffusion Adversarial Post-Training_) oraz adaptacyjną samouwagę okienkową (ang. _adaptive window attention_), co pozwala na płynne przetwarzanie sekwencji wideo w wysokich rozdzielczościach bez powstawania artefaktów.
 
-Podstawową zaletą metod jednokrokowych jest więc drastyczna redukcja czasu inferencji i zużycia zasobów poprzez zastąpienie wielokrotnych pętli odszumiania pojedynczym przejściem sieci. Odbywa się to jednak kosztem trudniejszego i mniej stabilnego treningu oraz większej podatności na artefakty przy złożonym ruchu.
+Podstawową zaletą metod jednokrokowych jest więc znaczna redukcja czasu inferencji i zużycia zasobów poprzez zastąpienie wielokrotnych pętli odszumiania pojedynczym przejściem sieci. Odbywa się to jednak kosztem mniej stabilnego treningu oraz większej podatności na artefakty przy złożonym ruchu.
 
 == Model FlashVSR
 <model-flashvsr>
 
-_FlashVSR_ @Zhuang2025FlashVSRTR to architektura przeznaczona do strumieniowego przetwarzania wideo w czasie rzeczywistym, wykorzystująca jednokrokowy model dyfuzyjny oparty na szkielecie _Wan 2.1-1.3B_ dostrojonym za pomocą metody LoRA. Ogólną budowę modelu przedstawiono na @rys:flashvsr[rysunku].
+_FlashVSR_ @Zhuang2025FlashVSRTR to architektura przeznaczona do strumieniowego przetwarzania wideo w czasie rzeczywistym, wykorzystująca jednokrokowy model dyfuzyjny. Jego budowę przedstawiono na @rys:flashvsr[rysunku].
 
 #figure(
   image("../images/rys_flashvsr_architektura.svg", width: 100%),
@@ -39,24 +39,21 @@ _FlashVSR_ @Zhuang2025FlashVSRTR to architektura przeznaczona do strumieniowego 
   ),
 ) <rys:flashvsr>
 
-Aby wyeliminować opóźnienia i spadek wydajności, autorzy wprowadzili lekki moduł projekcji wejściowej (_Causal LR Projection-In_). Moduł ten grupuje po cztery klatki LR i poddaje je 8-krotnej kompresji przestrzennej za pomocą operacji _pixel shuffle_, a następnie 4-krotnej kompresji czasowej przy użyciu przyczynowych konwolucji 3D (_3D CausalConv_). Dzięki zastosowaniu pamięci podręcznej (ang. _causal cache_), cechy z poprzednich sekwencji są spójnie przenoszone i rzutowane przez perceptron wielowarstwowy bezpośrednio do przestrzeni utajonej transformera dyfuzyjnego.
+Aby wyeliminować opóźnienia i spadek wydajności, autorzy wprowadzili lekki moduł projekcji wejściowej (_Causal LR Projection-In_). Moduł ten grupuje po cztery klatki LR i poddaje je ośmiokrotnej kompresji przestrzennej za pomocą operacji _pixel shuffle_, a następnie czterokrotnej kompresji czasowej przy użyciu przyczynowych konwolucji 3D (_3D CausalConv_). Dzięki zastosowaniu pamięci podręcznej (ang. _causal cache_), cechy z poprzednich sekwencji są spójnie przenoszone i rzutowane przez perceptron wielowarstwowy (MLP) bezpośrednio do przestrzeni utajonej transformera dyfuzyjnego.
 
 Głównym rozwiązaniem problemu złożoności obliczeniowej standardowej samouwagi 3D jest zastosowanie blokowo-rzadkiego mechanizmu uwagi z ograniczeniem lokalnym (ang. _Locality-Constrained Sparse Attention_), którego ogólną zasadę omówiono w @block-sparse-attention-odrzucanie-redundantnych-interakcji[podrozdziale]. FlashVSR wyznacza przybliżoną mapę uwagi poprzez uśrednianie reprezentacji kluczy i wartości, a pełne obliczenia wykonuje wyłącznie dla obszarów o najwyższych wynikach (ang. _top-k_). Dodatkowe nałożenie lokalnych okien przestrzennych ujednolica kodowanie pozycji między treningiem a wnioskowaniem, co umożliwia skalowanie modelu do bardzo wysokich rozdzielczości.
 
 Zamiast dzielić długie wideo na nachodzące na siebie fragmenty FlashVSR przetwarza nagranie w sposób strumieniowy. Płynność i spójność klatek zapewnia pamięć _KV-cache_ z mechanizmem okna przesuwnego. Pozwala ona przechowywać najważniejsze cechy obrazu z poprzednich kroków bez konieczności ponownego ich przeliczania.
 
-Ostatnim kluczowym elementem architektury jest zastąpienie ciężkiego, standardowego dekodera 3D VAE autorskim, lekkim dekoderem warunkowym (ang. _Tiny Conditional Decoder_). Zapewnia on około 7-krotne przyspieszenie etapu rekonstrukcji obrazu w przestrzeni pikseli w porównaniu z oryginalnym dekoderem sieci Wan, nie powodując przy tym widocznej utraty jakości wizualnej.
+Ostatnim kluczowym elementem architektury jest zastąpienie ciężkiego, standardowego dekodera 3D VAE autorskim, lekkim dekoderem warunkowym (ang. _Tiny Conditional Decoder_). Zapewnia on około siedmiokrotne przyspieszenie etapu rekonstrukcji obrazu w przestrzeni pikseli w porównaniu z oryginalnym dekoderem sieci Wan, nie powodując przy tym widocznej utraty jakości wizualnej.
 
 
-== Podsumowanie i wyznaczenie luki badawczej
+== Luka badawcza
 <podsumowanie-i-wyznaczenie-luki-badawczej>
-
-=== Porównanie i klasyfikacja metod VSR
-<porównanie-i-klasyfikacja-metod-vsr>
 
 Dotychczasowy rozwój metod VSR pokazuje wyraźną ewolucję od szybkich, lecz ograniczonych jakościowo modeli konwolucyjnych i rekurencyjnych, przez dokładniejsze architektury oparte na transformerach, aż po generatywne modele dyfuzyjne. Każda z tych klas rozwiązań charakteryzuje się odmiennym kompromisem pomiędzy jakością generowanego obrazu, wydajnością a zapotrzebowaniem na zasoby sprzętowe.
 
-Metody klasyczne (CNN/RNN) oferują najwyższą szybkość i niskie zużycie pamięci, jednak mają tendencję do generowania rozmytych tekstur. Transformery skutecznie modelują długoterminowe zależności czasowe, ale ich złożoność obliczeniowa rośnie kwadratowo wraz z długością sekwencji. Wielokrokowe modele dyfuzyjne zapewniają najwyższy fotorealizm, lecz konieczność wykonywania kilkudziesięciu iteracji pętli odszumiania uniemożliwia ich zastosowanie w trybie interaktywnym.
+Metody klasyczne (konwolucyjne i rekurencyjne) oferują najwyższą szybkość i niskie zużycie pamięci, jednak mają tendencję do generowania rozmytych tekstur. Transformery skutecznie modelują długoterminowe zależności czasowe, ale ich złożoność obliczeniowa rośnie kwadratowo wraz z długością sekwencji. Wielokrokowe modele dyfuzyjne zapewniają najwyższy fotorealizm, lecz konieczność wykonywania kilkudziesięciu iteracji pętli odszumiania uniemożliwia ich zastosowanie w trybie interaktywnym.
 
 Architektura _FlashVSR_ przełamuje to ograniczenie poprzez sprowadzenie procesu dyfuzji do jednego kroku inferencji oraz wprowadzenie mechanizmów strumieniowych i dedykowanego dekodera. Jakościowe zestawienie cech poszczególnych klas metod przedstawiono w @tab:vsr-comparison[tabeli].
 
@@ -101,7 +98,7 @@ Architektura _FlashVSR_ przełamuje to ograniczenie poprzez sprowadzenie procesu
       [średni],
       [wysokie, kwadratowe z długością sekwencji],
       [najwyższa wierność, percepcyjnie średnia],
-      [złożoność $O(N^2)$ samouwagi],
+      [złożoność $O(N^2)$\ samouwagi],
 
       [Dyfuzyjne wielokrokowe - Upscale-A-Video @zhou2023upscaleavideotemporalconsistentdiffusionmodel],
       [bardzo \ długi],
@@ -110,7 +107,7 @@ Architektura _FlashVSR_ przełamuje to ograniczenie poprzez sprowadzenie procesu
       [dziesiątki sekwencyjnych przejść sieci],
 
       [Dyfuzyjne jednokrokowe - FlashVSR @Zhuang2025FlashVSRTR, DOVE @chen2025doveefficientonestepdiffusion, SeedVR2 @wang2026seedvr2onestepvideorestoration],
-      [krótki, jedno przejście],
+      [krótki \ (jedno przejście)],
       [wysokie, wagi + KV-cache + aktywacje jednocześnie],
       [niższa wierność, wysoka jakość percepcyjna],
       [wysoki próg wejścia pamięci, niezależny od długości nagrania],
@@ -125,14 +122,8 @@ Architektura _FlashVSR_ przełamuje to ograniczenie poprzez sprowadzenie procesu
   ],
 ) <tab:vsr-comparison>
 
-=== Ograniczenia modelu FlashVSR
-<ograniczenia-modelu-flashvsr>
-
-Oryginalne wdrożenie tego modelu wykazuje ogromne zapotrzebowanie na pamięć karty graficznej. Wyniki wydajnościowe zaprezentowane przez autorów architektury uzyskano na akceleratorze NVIDIA A100 z 80 GB VRAM. W domyślnej precyzji FP16/BF16 rozmiar wag modelu w połączeniu z buforem KV-cache oraz alokacją pamięci na aktywacje warstw samouwagi sprawia, że próba uruchomienia bazowej wersji _FlashVSR_ na powszechnie dostępnych, konsumenckich kartach graficznych (np. z 10 GB VRAM) kończy się przepełnieniem pamięci.
-
-=== Sformułowanie problemu i celu pracy
-<sformułowanie-problemu-i-celu-pracy>
+Oryginalna implementacja modelu _FlashVSR_ wykazuje ogromne zapotrzebowanie na pamięć karty graficznej. Wyniki wydajnościowe zaprezentowane przez autorów architektury uzyskano na akceleratorze NVIDIA A100 z 80 GB VRAM. W domyślnej precyzji FP16/BF16 rozmiar wag modelu w połączeniu z buforem KV-cache oraz alokacją pamięci na aktywacje warstw samouwagi sprawia, że próba uruchomienia bazowej wersji na powszechnie dostępnych, konsumenckich kartach graficznych (np. z 10 GB VRAM) kończy się przepełnieniem pamięci.
 
 Głównym problemem jest więc brak możliwości bezpośredniego uruchomienia jednokrokowego modelu _FlashVSR_ na sprzęcie o ograniczonych zasobach.
 
-Luka ta wyznacza zakres niniejszej pracy, której cel sformułowano w @cel-i-zakres-pracy[podrozdziale]: zaprojektowanie, zrealizowanie i przeanalizowanie zoptymalizowanego potoku inferencji, sprowadzającego zapotrzebowanie modelu do pułapu 10 GB VRAM przy minimalnej utracie jakości wyjściowego obrazu. Kryteria doboru technik służących realizacji tego celu oraz ich zestawienie przedstawiono w @wybór-rozwiązań-do-implementacji[rozdziale].
+W odpowiedzi na tę lukę zdefiniowano zakres niniejszej pracy, której szczegółowy cel sformułowano w @cel-i-zakres-pracy[podrozdziale]. Polega on na zaprojektowaniu, implementacji oraz analizie zoptymalizowanego potoku inferencji, który obniży zapotrzebowanie modelu na pamięć do pułapu 10 GB VRAM przy minimalnej utracie jakości obrazu. Kryteria doboru zastosowanych technik oraz ich ostateczne zestawienie omówiono w @wybór-rozwiązań-do-implementacji[rozdziale].

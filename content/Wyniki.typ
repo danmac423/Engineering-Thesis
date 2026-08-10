@@ -25,12 +25,12 @@ Wyniki eksperymentu E1 zestawiono w @tab:e1[tabeli], a zmiany względem konfigur
       fill: (col, row) => if row == 0 { luma(230) } else { none },
       table.header([Jądro gęste], [Selekcja rzadka], [Kwantyzacja], [Czas \[s\]], [s/klatkę], [Szczyt \[MiB\]]),
 
-      [SDPA], [blokowo-rzadka], [brak], [26,89], [0,266], [9 110],
-      [SDPA], [blokowo-rzadka], [INT8 wag], [27,87], [0,276], [8 780],
-      [SDPA], [blokowo-rzadka], [INT8 wag i akt.], [34,84], [0,345], [8 212],
-      [SageAttention], [blokowo-rzadka], [brak], [27,34], [0,271], [9 292],
-      [SageAttention], [blokowo-rzadka], [INT8 wag], [28,15], [0,279], [8 764],
-      [SageAttention], [blokowo-rzadka], [INT8 wag i akt.], [35,15], [0,348], [8 240],
+      [SDPA], [Block Sparse Attention], [brak], [26,89], [0,266], [9 110],
+      [SDPA], [Block Sparse Attention], [INT8 wag], [27,87], [0,276], [8 780],
+      [SDPA], [Block Sparse Attention], [INT8 wag i akt.], [34,84], [0,345], [8 212],
+      [SageAttention], [Block Sparse Attention], [brak], [27,34], [0,271], [9 292],
+      [SageAttention], [Block Sparse Attention], [INT8 wag], [28,15], [0,279], [8 764],
+      [SageAttention], [Block Sparse Attention], [INT8 wag i akt.], [35,15], [0,348], [8 240],
       [SDPA], [SpargeAttention], [brak], [23,43], [0,232], [9 286],
       [SDPA], [SpargeAttention], [INT8 wag], [24,22], [0,240], [8 766],
       [SDPA], [SpargeAttention], [INT8 wag i akt.], [31,12], [0,308], [8 112],
@@ -53,19 +53,19 @@ Wyniki eksperymentu E1 zestawiono w @tab:e1[tabeli], a zmiany względem konfigur
       align: (left, right, right, right),
       stroke: 0.5pt + luma(150),
       fill: (col, row) => if row == 0 { luma(230) } else { none },
-      table.header([Konfiguracja], [Czas], [Pamięć], [Pamięć (wzgl.)]),
+      table.header([Konfiguracja], [Czas (wzgl.)], [Pamięć], [Pamięć (wzgl.)]),
 
-      [SDPA / blokowo-rzadka / brak], [0,0%], [0 MiB], [0,0%],
-      [SDPA / blokowo-rzadka / INT8 wag], [+3,6%], [-330 MiB], [-3,6%],
-      [SDPA / blokowo-rzadka / INT8 wag i akt.], [+29,6%], [-898 MiB], [-9,9%],
-      [SageAttention / blokowo-rzadka / brak], [+1,7%], [+182 MiB], [+2,0%],
-      [SageAttention / blokowo-rzadka / INT8 wag], [+4,7%], [-346 MiB], [-3,8%],
-      [SageAttention / blokowo-rzadka / INT8 wag i akt.], [+30,7%], [-870 MiB], [-9,5%],
+      [SDPA / Block Sparse Attention / brak], [0,0%], [0 MiB], [0,0%],
+      [SDPA / Block Sparse Attention / INT8 wag], [+3,6%], [-330 MiB], [-3,6%],
+      [SDPA / Block Sparse Attention / INT8 wag i akt.], [+29,6%], [-898 MiB], [-9,9%],
+      [SageAttention / Block Sparse Attention / brak], [+1,7%], [+182 MiB], [+2,0%],
+      [SageAttention / Block Sparse Attention / INT8 wag], [+4,7%], [-346 MiB], [-3,8%],
+      [SageAttention / Block Sparse Attention / INT8 wag i akt.], [+30,7%], [-870 MiB], [-9,5%],
       [SDPA / SpargeAttention / brak], [-12,9%], [+176 MiB], [+1,9%],
-      [SDPA / SpargeAttention / INT8 wag], [-9,9%], [-344 MiB], [-3,8%],
+      [SDPA / SpargeAttention / INT8 wag], [*-9,9%*], [*-344 MiB*], [-3,8%],
       [SDPA / SpargeAttention / INT8 wag i akt.], [+15,7%], [-998 MiB], [-11,0%],
       [SageAttention / SpargeAttention / brak], [-12,3%], [+184 MiB], [+2,0%],
-      [SageAttention / SpargeAttention / INT8 wag], [-9,4%], [-344 MiB], [-3,8%],
+      [SageAttention / SpargeAttention / INT8 wag], [*-9,4%*], [*-344 MiB*], [-3,8%],
       [SageAttention / SpargeAttention / INT8 wag i akt.], [+16,4%], [-998 MiB], [-11,0%],
     )],
 ) <tab:e1-delty>
@@ -73,7 +73,7 @@ Wyniki eksperymentu E1 zestawiono w @tab:e1[tabeli], a zmiany względem konfigur
 
 Zestawienie pozwala rozdzielić wpływ trzech osi optymalizacji, ponieważ każda z nich zmienia inną wielkość.
 
-Podmiana jądra uwagi gęstej nie przynosi korzyści. Zastąpienie mechanizmu SDPA biblioteką _SageAttention_ wydłuża czas o 1,7% przy selekcji blokowo-rzadkiej i o 0,7% przy _SpargeAttention_, a szczytowe zużycie pamięci podnosi o około 180 MiB. Wynik ten jest niezgodny z oczekiwaniem sformułowanym w @tab:zestawienie-technik[tabeli]. Możliwym wyjaśnieniem jest niewielki udział wywołań bez maski blokowej w całkowitym koszcie obliczeń. Jeżeli w badanym modelu przeważają wywołania z maską, obsługiwane przez ścieżkę rzadką, to przyspieszenie ścieżki gęstej dotyczy niewielkiej części pracy, a narzut kwantyzacji macierzy $Q$ i $K$, wykonywanej przy każdym wywołaniu, nie zostaje zamortyzowany.
+Podmiana jądra uwagi gęstej nie przynosi korzyści. Zastąpienie mechanizmu SDPA biblioteką _SageAttention_ wydłuża czas o 1,7% przy _Block Sparse Attention_ i o 0,7% przy _SpargeAttention_, a szczytowe zużycie pamięci podnosi o około 180 MiB. Wynik ten jest niezgodny z oczekiwaniem sformułowanym w @tab:zestawienie-technik[tabeli]. Możliwym wyjaśnieniem jest niewielki udział wywołań bez maski blokowej w całkowitym koszcie obliczeń. Jeżeli w badanym modelu przeważają wywołania z maską, obsługiwane przez ścieżkę rzadką, to przyspieszenie ścieżki gęstej dotyczy niewielkiej części pracy, a narzut kwantyzacji macierzy $Q$ i $K$, wykonywanej przy każdym wywołaniu, nie zostaje zamortyzowany.
 
 Podmiana selekcji rzadkiej skraca czas. Zastąpienie uwagi blokowo-rzadkiej autorów modelu biblioteką _SpargeAttention_ skraca czas inferencji o 12,9% przy niezmienionym trybie kwantyzacji, kosztem wzrostu szczytu pamięci o około 176 MiB. Jest to jedyne z badanych rozwiązań, które faktycznie przyspiesza przetwarzanie. Skrócenie czasu wynika prawdopodobnie z pomijania części obliczeń przez filtr opisany w @spargeattention[podrozdziale]. Pomiar nie pozwala jednak stwierdzić, jaki jest udział samej selekcji, a jaki kwantyzacji macierzy $Q$ i $K$, którą _SpargeAttention_ dziedziczy po _SageAttention_. Nie wiadomo też, czy metoda ta pomija więcej obliczeń niż metoda autorów modelu. Za tą drugą możliwością przemawia obserwacja z @jakosc-rekonstrukcji-wyniki[podrozdziału]. Podmiana selekcji rzadkiej jest tam jedyną zmianą o zauważalnym wpływie na jakość.
 
@@ -101,7 +101,7 @@ Wyniki eksperymentu E2 zestawiono w @tab:e2[tabeli]. Pomiary wykonano przy rozdz
       align: (right, right, right, right, right, right, right),
       stroke: 0.5pt + luma(150),
       fill: (col, row) => if row == 0 { luma(230) } else { none },
-      table.header([Kafel], [Kafli], [Redundancja], [Czas \[s\]], [s/klatkę], [Czas/kafel \[s\]], [Szczyt \[MiB\]]),
+      table.header([Rozmiar kafla], [Liczba kafli], [Redundancja], [Czas \[s\]], [s/klatkę], [Czas/kafel \[s\]], [Szczyt \[MiB\]]),
 
       [128], [15], [2,14], [81,32], [0,805], [5,42], [6 472],
       [160], [8], [1,79], [72,78], [0,721], [9,10], [7 386],
@@ -118,7 +118,7 @@ Na czas wpływają dwa czynniki o zbliżonej wadze. Pierwszym jest redundancja o
 
 Redundancja nie zmienia się monotonicznie wraz z rozmiarem kafla, lecz zależy od tego, jak siatka kafli dzieli klatkę. Gdy kafel nie mieści się w klatce, jego początek przesuwany jest wstecz, zgodnie z mechanizmem opisanym w @kafelkowanie-przestrzenne[podrozdziale], co przy rozmiarach źle dopasowanych do jej wymiarów prowadzi do bardzo szerokich zakładek. Widać to na przykładzie kafla 224, który daje tę samą liczbę kafli co kafel 192, przy większej powierzchni każdego z nich, przez co jego redundancja sięga 2,62.
 
-Dobór rozmiaru kafla wymaga zatem uwzględnienia obu czynników, przy czym redundancję można wyznaczyć z samej geometrii podziału, bez uruchamiania modelu. Uzyskane wartości odnoszą się przy tym wyłącznie do rozdzielczości 256 $times$ 448 i przy innej rozdzielczości korzystny okaże się inny rozmiar.
+Dobór rozmiaru kafla wymaga zatem uwzględnienia obu czynników, przy czym redundancję można wyznaczyć z samej geometrii podziału, bez uruchamiania modelu. Uzyskane wartości odnoszą się przy tym wyłącznie do rozdzielczości 256 $times$ 448 i przy innej rozdzielczości korzystniejszy może być inny rozmiar.
 
 == Granica wykonalności
 <granica-wykonalnosci>
@@ -150,7 +150,7 @@ Skalę zapotrzebowania określono na akceleratorze A100, gdzie obie konfiguracje
 ) <tab:referencja>
 
 
-Pomiary na akceleratorze A100 pozwalają określić skalę deficytu. Przy rozdzielczości autorów zapotrzebowanie wynosi 14 844 MiB, przy rozdzielczości bliższej typowym nagraniom rośnie do 23 512 MiB. Wartości te przekraczają pojemność karty docelowej odpowiednio około półtorakrotnie i blisko dwuipółkrotnie. Deficyt jest zatem na tyle duży, że nie dałoby się go pokryć samą kwantyzacją ani optymalizacją mechanizmu uwagi, których łączny efekt zmierzony w eksperymencie E1 nie przekracza 11%.
+Pomiary na akceleratorze A100 pozwalają określić skalę deficytu. Przy rozdzielczości wskazanej przez autorów zapotrzebowanie wynosi 14 844 MiB, przy rozdzielczości bliższej typowym nagraniom rośnie do 23 512 MiB. Wartości te przekraczają pojemność karty docelowej odpowiednio około półtorakrotnie i blisko dwuipółkrotnie. Deficyt jest zatem na tyle duży, że nie dałoby się go pokryć samą kwantyzacją ani optymalizacją mechanizmu uwagi, których łączny efekt zmierzony w eksperymencie E1 nie przekracza 11%.
 
 Zmierzona wartość 14 844 MiB jest wyższa od 11,13 GB raportowanych przez autorów dla tej samej rozdzielczości. Rozbieżność wynika najpewniej z przyjętej miary zużycia pamięci, omówionej w @wydajnosc[podrozdziale]. Przyjęta tu miara jest ostrożniejsza, ponieważ o wystąpieniu przepełnienia decyduje rozmiar puli zarezerwowanej.
 
@@ -253,7 +253,7 @@ Wyniki eksperymentu E3 dla zbioru YouHQ40 zestawiono w @tab:jakosc-youhq40[tabel
     )],
 ) <tab:jakosc-youhq40-delty>
 
-Utrata jakości przypada niemal wyłącznie na wprowadzenie kafelkowania przestrzennego. Na tę jedną zmianę przypada cała zmiana wartości PSNR, 94% zmiany LPIPS, 94% zmiany CLIPIQA, 80% zmiany DOVER i 75% zmiany MUSIQ. Trzy kolejne podmiany, obejmujące jądro uwagi gęstej, selekcję rzadką oraz kwantyzację wag i aktywacji, zmieniają metryki nieznacznie. Wyjątkiem jest spadek MUSIQ o 0,47 przy _SpargeAttention_, wyraźny na tle pozostałych podmian, choć blisko trzykrotnie mniejszy od spadku spowodowanego kafelkowaniem.
+Utrata jakości przypada niemal wyłącznie na wprowadzenie kafelkowania przestrzennego. Trzy kolejne podmiany, obejmujące jądro uwagi gęstej, selekcję rzadką oraz kwantyzację wag i aktywacji, zmieniają metryki nieznacznie. Wyjątkiem jest spadek MUSIQ o 0,47 przy _SpargeAttention_, wyraźny na tle pozostałych podmian, choć blisko trzykrotnie mniejszy od spadku spowodowanego kafelkowaniem.
 
 Badane optymalizacje obliczeniowe są zatem w przybliżeniu neutralne jakościowo, a kompromis między jakością a zużyciem pamięci sprowadza się do decyzji o podziale klatki na kafle. W szczególności kwantyzacja wag i aktywacji, redukująca szczyt zużycia pamięci o blisko 1 GiB, nie pogarsza rekonstrukcji w stopniu mierzalnym przyjętym zestawem metryk.
 
@@ -338,9 +338,9 @@ Wyniki dla zbioru VideoLQ, zawierającego nagrania o degradacjach rzeczywistych,
     )],
 ) <tab:jakosc-videolq-delty>
 
-Zbiór VideoLQ powtarza zaobserwowaną zależność. Na wprowadzenie kafelkowania przypada od 86% do 98% zmiany każdej z metryk, a trzy kolejne podmiany mieszczą się w przedziale 0,04 w skali MUSIQ. Wniosek o neutralności jakościowej optymalizacji obliczeniowych przenosi się zatem na nagrania rzeczywiste.
+Wyniki eksperymentu przeprowadzonego na zbiorze VideoLQ Potwierdzają zaobserwowaną zależność. Na wprowadzenie kafelkowania przypada zdecydowana większość zmiany każdej z metryk. Wniosek o neutralności jakościowej optymalizacji obliczeniowych przenosi się zatem na nagrania rzeczywiste.
 
-Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedstawiono na rysunkach @rys:jakosc-porownanie-ptak[] i @rys:jakosc-porownanie-targ[]. Kolumny przedstawiają materiał wejściowy oraz trzy wybrane konfiguracje z @tab:jakosc-videolq[tabeli]: bazową, bazową z kafelkowaniem oraz konfigurację ze wszystkimi optymalizacjami. W obu przypadkach wyniki pozostają nierozróżnialne, co potwierdza wniosek o neutralności jakościowej optymalizacji obliczeniowych.
+Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedstawiono na rysunkach @rys:jakosc-porownanie-ptak[] i @rys:jakosc-porownanie-targ[]. Kolumny przedstawiają materiał wejściowy oraz trzy wybrane konfiguracje z @tab:jakosc-videolq[tabeli]: bazową, bazową z kafelkowaniem oraz konfigurację ze wszystkimi optymalizacjami. W obu przykładach wyniki pozostają nierozróżnialne, co potwierdza wniosek o neutralności jakościowej optymalizacji obliczeniowych.
 
 #figure(
   image("../images/porownanie_006.svg", width: 100%),
@@ -355,4 +355,4 @@ Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedsta
 == Podsumowanie wyników
 <podsumowanie-wynikow>
 
-Trzy badane osie optymalizacji okazały się pełnić odmienne role. Kafelkowanie przestrzenne decyduje o wykonalności, ponieważ jako jedyne uniezależnia szczytowe zużycie pamięci od rozdzielczości nagrania. Ponosi też cały mierzalny koszt jakościowy. Selekcja rzadka oddziałuje przede wszystkim na czas inferencji, skracając go o blisko 13% przy niemal niezmienionych metrykach. Kwantyzacja oddziałuje na pamięć, obniżając szczyt o 898 MiB w wariancie obejmującym aktywacje. Kafelkowanie decyduje więc o wykonalności, a pozostałe dwie osie o kompromisie między czasem a zapasem pamięci w konfiguracji już wykonalnej.
+Trzy badane osie optymalizacji okazały się pełnić odmienne role. Kafelkowanie przestrzenne jako jedyne uniezależnia szczytowe zużycie pamięci od rozdzielczości nagrania oraz ponosi cały mierzalny koszt jakościowy. Selekcja rzadka oddziałuje przede wszystkim na czas inferencji, skracając go o blisko 13% przy niemal niezmienionych metrykach. Kwantyzacja oddziałuje na pamięć, obniżając szczyt o 898 MiB w wariancie obejmującym aktywacje. Kafelkowanie decyduje więc o wykonalności, a pozostałe dwie osie o kompromisie między czasem a zapasem pamięci w konfiguracji już wykonalnej.

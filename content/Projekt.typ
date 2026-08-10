@@ -11,7 +11,7 @@ Pomocniczo wykorzystano akcelerator NVIDIA A100, wyposażony w 80 GB pamięci. U
 
 == Środowisko programistyczne
 <środowisko-programistyczne>
-System zaimplementowano w języku Python w wersji 3.11, z wykorzystaniem biblioteki PyTorch 2.10 skompilowanej dla CUDA 12.8. Do zarządzania zależnościami wykorzystano narzędzie `uv`, które zapisuje pełny stan środowiska w pliku blokującym wersje. Zapewnia to odtwarzalność instalacji, istotną przy tak dużej liczbie komponentów wymagających kompilacji ze źródeł.
+System zaimplementowano w języku Python w wersji 3.11, z wykorzystaniem biblioteki PyTorch 2.10 @pytorch skompilowanej dla CUDA 12.8. Do zarządzania zależnościami wykorzystano narzędzie `uv`, które zapisuje pełny stan środowiska w pliku blokującym wersje. Zapewnia to odtwarzalność instalacji, istotną przy tak dużej liczbie komponentów wymagających kompilacji ze źródeł.
 
 Trzy biblioteki realizujące warianty mechanizmu uwagi - `block_sparse_attn`, `sageattention` oraz `spas_sage_attn` - instalowane są bezpośrednio z repozytoriów źródłowych i wymagają kompilacji jąder CUDA. Ich instalacja wymagała ustawienia zmiennych środowiskowych określających docelowe architektury GPU oraz wskazania kompilatora w wersji zgodnej z wymaganiami narzędzia `nvcc`. Pozostałe istotne zależności to `torchao` w wersji 0.16 (kwantyzacja), `torchcodec` i `av` (dekodowanie i kodowanie materiału wideo) oraz `pyiqa` (metryki jakości obrazu).
 
@@ -19,7 +19,7 @@ Implementacja referencyjna metryki DOVER wymaga biblioteki PyTorch w wersji sprz
 
 == Architektura pakietu
 <architektura-pakietu>
-Implementacja referencyjna modelu FlashVSR ma postać zbioru skryptów, w których konfiguracja jest zapisana na stałe w kodzie, co uniemożliwia wygodne porównywanie wariantów. Kod zrefaktoryzowano zatem do postaci pakietu o wyraźnie rozdzielonych warstwach odpowiedzialności.
+Implementacja referencyjna modelu _FlashVSR_ @flashvsrgithub ma postać zbioru skryptów, w których konfiguracja jest zapisana na stałe w kodzie, co uniemożliwia wygodne porównywanie wariantów. Z tego względu kod zrefaktoryzowano do postaci pakietu o wyraźnie rozdzielonych warstwach odpowiedzialności.
 
 Warstwa `config` zawiera struktury opisujące konfigurację przetwarzania: tryb uwagi, tryb kwantyzacji, parametry kafelkowania przestrzennego i czasowego oraz parametry wejścia i wyjścia. Warstwa `models` obejmuje komponenty modelu: transformer dyfuzyjny, autoenkoder oraz lekki dekoder warunkowy. Warstwa `pipelines` zawiera właściwy potok inferencji, warstwa `processing` odpowiada za jego inicjalizację i orkiestrację przetwarzania nagrania, a warstwa `utils` gromadzi funkcje pomocnicze obliczające podział na kafle, maski mieszania i wymagane wymiary danych.
 
@@ -36,7 +36,11 @@ Przebieg przetwarzania nagrania przedstawiono na @rys:przeplyw[rysunku]. Sekwenc
   caption: [Przepływ przetwarzania nagrania w zaimplementowanym potoku],
 ) <rys:przeplyw>
 
-Przetwarzanie nagrania przebiega w kilku etapach: dekodowanie materiału wejściowego, podział na segmenty czasowe i dopełnienie liczby klatek, podział każdego segmentu na kafle przestrzenne, inferencja, złożenie wyników i zapis. Podział czasowy opisano w @kafelkowanie-czasowe[podrozdziale], podział na kafle przestrzenne i sposób ich łączenia w @kafelkowanie-przestrzenne[podrozdziale], a warianty mechanizmu uwagi i kwantyzacji w @wymienne-warianty-mechanizmu-uwagi[podrozdziałach] i @integracja-kwantyzacji[].
+Przetwarzanie nagrania przebiega w kilku etapach. Materiał wejściowy jest najpierw dekodowany, a uzyskana sekwencja klatek dzielona na segmenty czasowe o zadanej długości. Ponieważ długość segmentu musi spełniać zależność wynikającą z przyczynowej kompresji czasowej autoenkodera, zbyt krótki segment jest dopełniany powieleniem ostatniej klatki, a klatki nadmiarowe odrzucane po zakończeniu przetwarzania. Mechanizm podziału czasowego omówiono w @kafelkowanie-czasowe[podrozdziale].
+
+Każdy segment dzielony jest następnie na kafle przestrzenne, przetwarzane kolejno, niezależnie od siebie. Przed inferencją kafel jest skalowany do rozdzielczości docelowej i dopełniany do wymiarów wymaganych przez podział na łaty, a po jej zakończeniu dopełnienie zostaje usunięte. Gotowe kafle składane są w pełną klatkę przez ważone sumowanie w obszarach nakładania. Podział na kafle oraz sposób ich łączenia opisano w @kafelkowanie-przestrzenne[podrozdziale].
+
+Sama inferencja obejmuje przejście przez transformer dyfuzyjny oraz dekodowanie wyniku do przestrzeni pikseli. To na tym etapie zastosowanie znajdują wymienne warianty mechanizmu uwagi oraz kwantyzacja, przedstawione odpowiednio w @wymienne-warianty-mechanizmu-uwagi[podrozdziale] i @integracja-kwantyzacji[podrozdziale]. Wynik przetworzonego segmentu zapisywany jest przyrostowo, a klatki z obszaru zakładki łączone są z segmentem poprzednim.
 
 Kluczową decyzją projektową jest przenoszenie wyniku każdego kafla poza pamięć karty graficznej bezpośrednio po jego przetworzeniu. Na karcie znajdują się jednocześnie wyłącznie wagi modelu, pamięć podręczna kluczy i wartości oraz aktywacje jednego kafla, natomiast płótna akumulacyjne obejmujące jeden segment czasowy utrzymywane są w pamięci operacyjnej.
 
