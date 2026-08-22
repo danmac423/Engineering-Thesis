@@ -32,7 +32,8 @@ Istotnym założeniem projektowym jest oddzielenie budowy potoku od jego wykonan
 Przebieg przetwarzania nagrania przedstawiono na @rys:przeplyw[rysunku]. Podział na segmenty czasowe i kafle przestrzenne sprawia, że właściwa inferencja wykonywana jest zawsze na pojedynczym kaflu, niezależnie od długości i rozdzielczości nagrania wejściowego.
 
 #figure(
-  image("../images/rys_przeplyw_przetwarzania.svg", width: 50%),
+  image("../images/rys_przeplyw_przetwarzania.svg", height: 70%),
+  placement: auto,
   caption: [Przepływ przetwarzania nagrania w zaimplementowanym potoku],
 ) <rys:przeplyw>
 

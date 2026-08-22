@@ -1,5 +1,13 @@
 #import "../utils.typ": flex-caption, silentheading, todo
 
+#let placeholder(h, opis) = rect(
+  width: 100%,
+  height: h,
+  fill: luma(245),
+  stroke: (paint: luma(160), thickness: 0.5pt, dash: "dashed"),
+  align(center + horizon, text(size: 9pt, fill: luma(110), opis)),
+)
+
 = Wyniki i ich omówienie
 <wyniki-i-ich-omowienie>
 
@@ -101,7 +109,9 @@ Wyniki eksperymentu E2 zestawiono w @tab:e2[tabeli]. Pomiary wykonano przy rozdz
       align: (right, right, right, right, right, right, right),
       stroke: 0.5pt + luma(150),
       fill: (col, row) => if row == 0 { luma(230) } else { none },
-      table.header([Rozmiar kafla], [Liczba kafli], [Redundancja], [Czas \[s\]], [s/klatkę], [Czas/kafel \[s\]], [Szczyt \[MiB\]]),
+      table.header(
+        [Rozmiar kafla], [Liczba kafli], [Redundancja], [Czas \[s\]], [s/klatkę], [Czas/kafel \[s\]], [Szczyt \[MiB\]]
+      ),
 
       [128], [15], [2,14], [81,32], [0,805], [5,42], [6 472],
       [160], [8], [1,79], [72,78], [0,721], [9,10], [7 386],
@@ -338,19 +348,83 @@ Wyniki dla zbioru VideoLQ, zawierającego nagrania o degradacjach rzeczywistych,
     )],
 ) <tab:jakosc-videolq-delty>
 
-Wyniki eksperymentu przeprowadzonego na zbiorze VideoLQ Potwierdzają zaobserwowaną zależność. Na wprowadzenie kafelkowania przypada zdecydowana większość zmiany każdej z metryk. Wniosek o neutralności jakościowej optymalizacji obliczeniowych przenosi się zatem na nagrania rzeczywiste.
+Wyniki eksperymentu przeprowadzonego na zbiorze VideoLQ potwierdzają zaobserwowaną zależność. Na wprowadzenie kafelkowania przypada zdecydowana większość zmiany każdej z metryk. Wniosek o neutralności jakościowej optymalizacji obliczeniowych przenosi się zatem na nagrania rzeczywiste.
 
-Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedstawiono na rysunkach @rys:jakosc-porownanie-ptak[] i @rys:jakosc-porownanie-targ[]. Kolumny przedstawiają materiał wejściowy oraz trzy wybrane konfiguracje z @tab:jakosc-videolq[tabeli]: bazową, bazową z kafelkowaniem oraz konfigurację ze wszystkimi optymalizacjami. W obu przykładach wyniki pozostają nierozróżnialne, co potwierdza wniosek o neutralności jakościowej optymalizacji obliczeniowych.
+// Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedstawiono na rysunkach @rys:jakosc-porownanie-ptak[] i @rys:jakosc-porownanie-targ[]. Kolumny przedstawiają materiał wejściowy oraz trzy wybrane konfiguracje z @tab:jakosc-videolq[tabeli]: bazową, bazową z kafelkowaniem oraz konfigurację ze wszystkimi optymalizacjami. W obu przykładach wyniki pozostają nierozróżnialne, co potwierdza wniosek o neutralności jakościowej optymalizacji obliczeniowych.
+
+// #figure(
+//   image("../images/porownanie_006.svg", width: 100%),
+//   caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13.],
+// ) <rys:jakosc-porownanie-ptak>
+// #figure(
+//   image("../images/porownanie_008.svg", width: 100%),
+//   caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0.],
+// ) <rys:jakosc-porownanie-targ>
+
+== Porównanie wizualne
+<porownanie-wizualne>
+
+Zestawienia liczbowe uzupełniono o porównania wizualne, osobno dla obu zbiorów testowych. Dla każdego z nich przedstawiono zbliżenia wybranych fragmentów klatki dla kolejnych konfiguracji łańcucha przyrostowego, co pozwala ocenić, czy różnice raportowane przez metryki są dostrzegalne.
+
+Zbiór YouHQ40 zawiera materiał referencyjny, więc porównania obejmują również klatkę wzorcową. Zbliżenia dla dwóch klipów przedstawiono na rysunkach @rys:jakosc-porownanie-youhq-a[] i @rys:jakosc-porownanie-youhq-b[]. Kolumny przedstawiają materiał wejściowy, materiał referencyjny oraz dwie wybrane konfiguracje z @tab:jakosc-youhq40[tabeli]: bazową oraz konfigurację ze wszystkimi optymalizacjami.
+
+// TODO: podmienić placeholder na wygenerowany rysunek
+#figure(
+  placeholder(
+    5cm,
+    [YouHQ40, klip A: pełna klatka LR ze znacznikami ROI oraz zbliżenia w pięciu kolumnach (LR, bazowa, kafelkowanie 192, wszystkie optymalizacje, GT)],
+  ),
+  caption: flex-caption(
+    [Porównanie jakościowe dla zbioru YouHQ40, klip A, klatka N. Kolumny: materiał wejściowy, konfiguracja bazowa, konfiguracja ze wszystkimi optymalizacjami oraz materiał referencyjny],
+    [Porównanie jakościowe dla zbioru YouHQ40, klip A],
+  ),
+) <rys:jakosc-porownanie-youhq-a>
+
+// TODO: podmienić placeholder na wygenerowany rysunek
+#figure(
+  placeholder(5cm, [YouHQ40, klip B: układ jak wyżej]),
+  caption: flex-caption(
+    [Porównanie jakościowe dla zbioru YouHQ40, klip B, klatka N. Układ kolumn jak na @rys:jakosc-porownanie-youhq-a[rysunku]],
+    [Porównanie jakościowe dla zbioru YouHQ40, klip B],
+  ),
+) <rys:jakosc-porownanie-youhq-b>
+
+Pełne klatki dla dwóch klipów, wraz z odpowiadającym im materiałem referencyjnym, przedstawiono na @rys:klatki-youhq[rysunku]. Wynik wygenerowano w konfiguracji odpowiadającej ostatniej w łańcuchu przyrostowym.
+
+// TODO: podmienić placeholder na wygenerowany rysunek
+#figure(
+  placeholder(11cm, [YouHQ40: dwie kolumny (dwa klipy) i trzy wiersze — LR, SR, GT]),
+  caption: flex-caption(
+    [Pełne klatki dla zbioru YouHQ40. Kolumny odpowiadają dwóm klipom, wiersze kolejno materiałowi wejściowemu, wynikowi modelu oraz materiałowi referencyjnemu],
+    [Pełne klatki dla zbioru YouHQ40],
+  ),
+) <rys:klatki-youhq>
+
+Zbiór VideoLQ nie zawiera materiału referencyjnego, więc porównania ograniczają się do zestawienia konfiguracji. Zbliżenia dla dwóch klipów o odmiennym charakterze treści przedstawiono na rysunkach @rys:jakosc-porownanie-ptak[] i @rys:jakosc-porownanie-targ[]. Kolumny przedstawiają materiał wejściowy oraz trzy wybrane konfiguracje z @tab:jakosc-videolq[tabeli]: bazową, bazową z kafelkowaniem oraz konfigurację ze wszystkimi optymalizacjami.
 
 #figure(
   image("../images/porownanie_006.svg", width: 100%),
-  caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13.],
+  caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13. Kolumny: materiał wejściowy, konfiguracja bazowa, konfiguracja bazowa z kafelkowaniem, konfiguracja ze wszystkimi optymalizacjami],
 ) <rys:jakosc-porownanie-ptak>
+
 #figure(
   image("../images/porownanie_008.svg", width: 100%),
-  caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0.],
+  caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0.  Układ kolumn jak na @rys:jakosc-porownanie-ptak[rysunku]],
 ) <rys:jakosc-porownanie-targ>
 
+Pełne klatki dla trzech klipów przedstawiono na @rys:klatki-videolq[rysunku]. Wynik wygenerowano w tej samej konfiguracji co dla zbioru YouHQ40.
+
+// TODO: podmienić placeholder na wygenerowany rysunek
+#figure(
+  placeholder(11cm, [VideoLQ: trzy wiersze (trzy klipy) i dwie kolumny — LR oraz SR]),
+  caption: flex-caption(
+    [Pełne klatki dla zbioru VideoLQ. Kolejne wiersze przedstawiają trzy klipy, kolumny odpowiadają materiałowi wejściowemu oraz wynikowi modelu],
+    [Pełne klatki dla zbioru VideoLQ],
+  ),
+) <rys:klatki-videolq>
+
+#todo("sprawdzic czy to ma sens")
+Porównania potwierdzają wnioski wyciągnięte z metryk: badane konfiguracje dają niemal nierozróżnialne wyniki, w obu zbiorach i niezależnie od charakteru treści. Zestawienie z materiałem referencyjnym wypada natomiast inaczej. Model nie odtwarza wiernie klatki wzorcowej, lecz uzupełnia utracone detale wiarygodnymi, choć odmiennymi strukturami, co jest najlepiej widoczne w drobnych teksturach i na krawędziach. Wynika to z niejednoznaczności zadania superrozdzielczości omówionej w @sformułowanie-problemu[podrozdziale] i jest właściwością samego modelu bazowego, a nie skutkiem wprowadzonych optymalizacji.
 
 == Podsumowanie wyników
 <podsumowanie-wynikow>

@@ -13,7 +13,7 @@ W modelu _BasicVSR_ @chan2021basicvsrsearchessentialcomponents zastosowano dwuki
 == Metody oparte na transformerach
 <metody-oparte-na-transformerach>
 
-Transformery w VSR wykorzystują mechanizmy samouwagi (ang. _self-attention_) do dynamicznego ważenia i modelowania relacji czasowych wzdłuż całej sekwencji @Baniya_2024. Przykładowo, model _VSRT_ @cao2023videosuperresolutiontransformer posiada moduł STCSA (_Spatial-Temporal Convolutional Self-Attention_) do ekstrakcji lokalnych cech przestrzennych oraz dwukierunkową warstwę BOFF (_Bidirectional Optical Flow-Based Feed-Forward_), opartą na przepływie optycznym, do wyrównywania cech między klatkami. Alternatywne podejście reprezentuje _VRT_ @liang2022vrtvideorestorationtransformer, który zamiast przetwarzać klipy sekwencyjnie, rekonstruuje je równoległe. Wykorzystuje on moduł TMSA (_Temporal Mutual Self-Attention_) do jednoczesnej estymacji ruchu, wyrównywania i fuzji cech.
+Transformery w VSR wykorzystują mechanizmy samouwagi (ang. _self-attention_) do dynamicznego ważenia i modelowania relacji czasowych wzdłuż całej sekwencji @Baniya_2024. Przykładowo, model _VSRT_ @cao2023videosuperresolutiontransformer posiada moduł STCSA (_Spatial-Temporal Convolutional Self-Attention_) do ekstrakcji lokalnych cech przestrzennych oraz dwukierunkową warstwę BOFF (_Bidirectional Optical Flow-Based Feed-Forward_), opartą na przepływie optycznym, do wyrównywania cech między klatkami. Alternatywne podejście reprezentuje _VRT_ @liang2022vrtvideorestorationtransformer, który zamiast przetwarzać klipy sekwencyjnie, rekonstruuje je równolegle. Wykorzystuje on moduł TMSA (_Temporal Mutual Self-Attention_) do jednoczesnej estymacji ruchu, wyrównywania i fuzji cech.
 
 Kluczową zaletą metod opartych na transformerach jest ich zdolność do bezstratnego wychwytywania długoterminowych zależności czasowych oraz możliwość równoległego przetwarzania klatek, co pozwala wyeliminować wąskie gardło rekurencji @liang2022vrtvideorestorationtransformer. Głównym ograniczeniem pozostaje jednak bardzo wysoka złożoność obliczeniowa i ogromne zapotrzebowanie na pamięć w porównaniu z klasycznymi sieciami konwolucyjnymi @Baniya_2024.
 
@@ -33,6 +33,7 @@ _FlashVSR_ @Zhuang2025FlashVSRTR to architektura przeznaczona do strumieniowego 
 
 #figure(
   image("../images/rys_flashvsr_architektura.svg", width: 100%),
+  placement: auto,
   caption: flex-caption(
     [Schemat przetwarzania w modelu FlashVSR: projekcja wejściowa, transformer dyfuzyjny z uwagą blokowo-rzadką oraz lekki dekoder warunkowy; opracowanie własne na podstawie @Zhuang2025FlashVSRTR],
     [Schemat przetwarzania w modelu FlashVSR],

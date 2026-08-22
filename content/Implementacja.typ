@@ -23,11 +23,22 @@ Kwantyzacja modyfikuje wagi w sposób nieodwracalny, dlatego zmiana jej trybu wy
 
 == Kafelkowanie przestrzenne
 <kafelkowanie-przestrzenne>
+#figure(
+  image("../images/rys_kafelkowanie_przestrzenne.svg", width: 100%),
+  caption: flex-caption(
+    [
+      Kafelkowanie przestrzenne: (a) podział klatki na kafle z zaznaczonymi obszarami nakładania, (b) cofnięcie kafla wykraczającego poza krawędź klatki, (c) maski mieszania poszczególnych kafli i suma ich wag. Przykład odpowiada wejściu 448 × 256 pikseli, kaflowi 192 piksele i zakładce 24 piksele
+    ],
+    [Schemat kafelkowania przestrzennego],
+  ),
+) <rys:kafelkowanie-przestrzenne>
 Motywację dla ograniczenia rozmiaru przetwarzanego fragmentu przedstawiono w @ograniczenie-rozmiaru-przetwarzanego-fragmentu[podrozdziale]. Samo kafelkowanie jest wykonalne dzięki własności odziedziczonej po implementacji referencyjnej: bufory pamięci podręcznej kluczy i wartości inicjalizowane są wartością pustą na początku każdego wywołania potoku, a stan strumieniowy rośnie wyłącznie wzdłuż osi czasu w obrębie jednego wywołania. Każde wywołanie stanowi więc niezależny przebieg. Fragmenty klatki można zatem przetwarzać bez współdzielenia stanu między nimi.
 
-Podział klatki na kafle realizuje funkcja zwracająca listę współrzędnych obszarów wejściowych, wyznaczanych z zadanego rozmiaru kafla i szerokości zakładki. Gdy obszar wykracza poza wymiary klatki, jego brzeg jest przycinany do krawędzi, a brzeg przeciwny cofany tak, aby zachować zadany rozmiar. Zapobiega to przetwarzaniu kafli mniejszych od zadanego rozmiaru, kosztem zwiększonej zakładki przy krawędziach obrazu. Jeżeli natomiast zadany rozmiar przekracza wymiar klatki, cofnięcie nie jest możliwe i kafel zostaje zredukowany do rozmiaru obrazu.
+Podział klatki na kafle realizuje funkcja zwracająca listę współrzędnych obszarów wejściowych, wyznaczanych z zadanego rozmiaru kafla i szerokości zakładki; wynikowy układ przedstawiono na @rys:kafelkowanie-przestrzenne[rysunku] (a). Gdy obszar wykracza poza wymiary klatki, jego brzeg jest przycinany do krawędzi, a brzeg przeciwny cofany tak, aby zachować zadany rozmiar (@rys:kafelkowanie-przestrzenne[rysunek] (b)). Zapobiega to przetwarzaniu kafli mniejszych od zadanego rozmiaru, kosztem poszerzonej zakładki. Jeżeli natomiast zadany rozmiar przekracza wymiar klatki, cofnięcie nie jest możliwe i kafel zostaje zredukowany do rozmiaru obrazu.
 
-Wyniki poszczególnych kafli łączone są przez akumulację na dwóch płótnach: na pierwszym sumowane są kafle przemnożone przez maskę mieszania, na drugim same wagi maski. Iloraz obu płócien daje średnią ważoną w obszarach nakładania. Maska nadaje pasom o szerokości zakładki przy każdej krawędzi wagi narastające liniowo ku wnętrzu kafla. Rozwiązanie to nie wymaga rozróżniania kafli brzegowych i wewnętrznych ani znajomości położenia sąsiadów.
+Wyniki poszczególnych kafli łączone są przez akumulację na dwóch płótnach: na pierwszym sumowane są kafle przemnożone przez maskę mieszania, na drugim same wagi maski. Maska nadaje pasom o szerokości zakładki przy każdej krawędzi wagi narastające liniowo ku wnętrzu kafla. Iloraz obu płócien daje średnią ważoną w obszarach nakładania. Ponieważ cofnięcie kafli przy krawędziach klatki prowadzi do zakładek szerszych niż zadana, sumaryczna waga nie jest w takich obszarach stała, co przedstawiono na @rys:kafelkowanie-przestrzenne[rysunku] (c). Dzielenie przez drugie płótno normalizuje ją niezależnie od liczby kafli pokrywających dany piksel, dzięki czemu rozwiązanie nie wymaga rozróżniania kafli brzegowych i wewnętrznych ani znajomości położenia sąsiadów.
+
+
 
 == Kafelkowanie czasowe
 <kafelkowanie-czasowe>
