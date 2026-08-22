@@ -10,6 +10,8 @@ Implementacja referencyjna modelu FlashVSR została zrefaktoryzowana ze zbioru s
 
 Cel pracy, którym było umożliwienie inferencji jednokrokowego modelu superrozdzielczości wideo opartego na dyfuzji na karcie graficznej wyposażonej w 10 GB pamięci VRAM, został zrealizowany. Modelu w postaci udostępnionej przez autorów nie da się uruchomić na karcie docelowej przy żadnej z badanych rozdzielczości wejściowych. W konfiguracji zalecanej w @wnioski-badawcze[podrozdziale] model przetwarza ten sam materiał w dostępnym budżecie pamięci, kosztem wydłużenia czasu inferencji i akceptowalnej utraty jakości rekonstrukcji.
 
+Kod, skrypty pomiarowe i wyniki eksperymentów udostępniono w repozytorium wskazanym w @implementacja[rozdziale]. Pełnych danych wejściowych i wyjściowych dla obu zbiorów testowych, zajmujących kilkadziesiąt gigabajtów, nie umieszczono w repozytorium. Zarchiwizowano je na nośniku zewnętrznym i są dostępne na żądanie, a w repozytorium znalazł się ich reprezentatywny podzbiór.
+
 == Wnioski badawcze
 <wnioski-badawcze>
 

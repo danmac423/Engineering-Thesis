@@ -5,6 +5,8 @@
 
 Oryginalne skrypty inferencyjne przebudowano w jednolity pakiet, co pozwala na łatwe zarządzanie parametrami modelu. Kod rozszerzono również o optymalizacje skracające czas obliczeń i zmniejszające zużycie pamięci. W tym celu zaimplementowano wymienne mechanizmy uwagi, kwantyzację całkowitoliczbową transformera dyfuzyjnego oraz kafelkowanie przestrzenne i czasowe. Kryteria doboru tych trzech osi optymalizacji omówiono w @wybór-rozwiązań-do-implementacji[rozdziale].
 
+Kod źródłowy udostępniono w publicznym repozytorium #link("https://github.com/danmac423/FlashVSR")[github.com/danmac423/FlashVSR]. Poza kodem zawiera ono skrypty pomiarowe i konfiguracje eksperymentów, surowe wyniki w formacie CSV, na podstawie których stworzono tabele @wyniki-i-ich-omowienie[rozdziału], pliki źródłowe zamieszczonych ilustracji, reprezentatywne przykłady materiału wejściowego i wyjściowego oraz nagranie z działania aplikacji pokazowej. Dokładny opis zawartości katalogów i sposób uruchomienia zawiera plik README.
+
 == Wymienne warianty mechanizmu uwagi
 <wymienne-warianty-mechanizmu-uwagi>
 W implementacji referencyjnej wybór jądra obliczeniowego nie podlegał konfiguracji. Realizował go łańcuch warunków sterowany obecnością maski blokowej oraz dostępnością pakietów w środowisku. _SageAttention_ miało w nim bardzo niski priorytet i było wybierane wyłącznie, gdy FlashAttention było niedostępne. Co więcej, pakiet ten nie był wymieniony wśród zadeklarowanych zależności, przez co ścieżka ta pozostawała w praktyce nieosiągalna.
