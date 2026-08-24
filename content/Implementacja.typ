@@ -17,7 +17,7 @@ Wybrane jądro wymaga obecności odpowiedniej biblioteki w środowisku. Jeżeli 
 
 == Integracja kwantyzacji
 <integracja-kwantyzacji>
-Kwantyzację umieszczono w funkcji inicjalizującej potok, po wczytaniu wag i przeniesieniu modelu na kartę graficzną. Realizuje ją pojedyncze wywołanie funkcji `quantize_` biblioteki torchao, której przekazuje się transformer dyfuzyjny oraz obiekt konfiguracji odpowiadający wybranemu trybowi: `Int8WeightOnlyConfig` dla kwantyzacji wag albo `Int8DynamicActivationInt8WeightConfig` dla kwantyzacji wag i aktywacji.
+Kwantyzację umieszczono w funkcji inicjalizującej potok, po wczytaniu wag i przeniesieniu modelu na kartę graficzną. Realizuje ją pojedyncze wywołanie funkcji `quantize_` biblioteki torchao, której przekazuje się transformer dyfuzyjny oraz obiekt konfiguracji odpowiadający wybranemu trybowi: `Int8WeightOnlyConfig` dla kwantyzacji wag albo~`Int8DynamicActivationInt8WeightConfig` dla kwantyzacji wag i aktywacji.
 
 Biblioteka torchao zastępuje tensory wag warstw liniowych własnymi podtypami, przechowującymi wartości skwantyzowane wraz z parametrami mapowania. Podmiana odbywa się w miejscu, bez modyfikacji definicji modelu, dzięki czemu pozostałe komponenty potoku nie wymagały zmian. Kwantyzacji poddano wyłącznie transformer dyfuzyjny. Dekoder warunkowy, moduł projekcji wejściowej oraz autoenkoder pozostają w precyzji `bfloat16`.
 
@@ -45,15 +45,14 @@ Wyniki poszczególnych kafli łączone są przez akumulację na dwóch płótnac
 <kafelkowanie-czasowe>
 Implementacja referencyjna obsługiwała długie nagrania odrębną klasą potoku i odrębnym skryptem. Rozwiązanie to zastąpiono kafelkowaniem czasowym sterowanym konfiguracją, dzięki czemu ten sam potok obsługuje nagrania dowolnej długości.
 
-Sekwencja wejściowa dzielona jest na segmenty o zadanej długości, wyznaczane analogicznie do kafli przestrzennych. Segmenty przetwarzane są kolejno, a wynik zapisywany przyrostowo, co pozwala utrzymywać w pamięci operacyjnej wyłącznie bieżący segment. Jest to konieczne, ponieważ przy długich nagraniach materiał po czterokrotnym powiększeniu przekraczałby pojemność dostępnej pamięci. Każdy segment stanowi niezależny przebieg strumieniowy i nie dziedziczy kontekstu poprzednika, dlatego klatki z obszaru zakładki łączone są przez mieszanie liniowe. Końcówka segmentu poprzedniego i początek segmentu bieżącego sumowane są z wagami zmieniającymi się liniowo wzdłuż osi czasu.
+Sekwencja wejściowa dzielona jest na segmenty o zadanej długości, wyznaczane analogicznie do kafli przestrzennych. Segmenty przetwarzane są kolejno, a wynik zapisywany przyrostowo, co pozwala utrzymywać w pamięci operacyjnej wyłącznie bieżący segment. Jest to konieczne, ponieważ przy długich nagraniach materiał po czterokrotnym powiększeniu przekraczałby pojemność dostępnej pamięci. Każdy segment stanowi niezależny przebieg strumieniowy i nie dziedziczy kontekstu poprzednika, dlatego klatki z obszaru zakładki łączone są przez mieszanie liniowe. Końcówka segmentu poprzedniego i początek segmentu bieżącego sumowane są z~wagami zmieniającymi się liniowo wzdłuż osi czasu.
 
 Długość segmentu nie jest dowolna. Czterokrotna przyczynowa kompresja czasowa autoenkodera wymusza wartości spełniające określoną zależność arytmetyczną, wyznaczane przez funkcje pomocnicze pakietu. Zbyt krótki segment jest przed przetworzeniem dopełniany przez powielenie ostatniej klatki, a nadmiarowe klatki są odrzucane po zakończeniu.
 
 == Aplikacja pokazowa
 <aplikacja-pokazowa>
 
-Aplikacja pokazowa umożliwia korzystanie z zaimplementowanych mechanizmów bez
-znajomości interfejsu programistycznego pakietu oraz porównywanie konfiguracji
+Aplikacja pokazowa umożliwia korzystanie z zaimplementowanych mechanizmów bez~znajomości interfejsu programistycznego pakietu oraz porównywanie konfiguracji
 na dowolnym nagraniu. Składa się z usługi sieciowej oraz interfejsu przeglądarkowego, komunikujących się przez protokół HTTP.
 
 Usługa udostępnia cztery operacje. Zlecenie przetwarzania przyjmowane jest pod
@@ -68,7 +67,7 @@ kończy się odmową ze wskazaniem bieżącego stanu.
 
 Zlecenia obsługiwane są asynchronicznie. Trafiają do kolejki, z której pobiera je pojedynczy proces roboczy uruchamiany przy starcie usługi. Ograniczenie do jednego procesu jest konieczne, ponieważ równoległe przetwarzanie dwóch nagrań wymagałoby jednoczesnego utrzymywania dwóch potoków na karcie, co przekroczyłoby jej budżet pamięci. Właściwa inferencja wykonywana jest w osobnym wątku, dzięki czemu operacje blokujące nie wstrzymują obsługi zapytań o stan zleceń.
 
-Proces roboczy utrzymuje zbudowany potok między kolejnymi zleceniami i odtwarza go wyłącznie wtedy, gdy zmieni się konfiguracja mechanizmu uwagi lub kwantyzacji. Wynika to z własności opisanych w podrozdziałach @wymienne-warianty-mechanizmu-uwagi[] i @integracja-kwantyzacji[]: wybór jąder obliczeniowych następuje przy budowie modelu, a kwantyzacja modyfikuje wagi nieodwracalnie. Parametry kafelkowania oraz parametry przetwarzania można natomiast zmieniać między zleceniami bez ponownej inicjalizacji.
+Proces roboczy utrzymuje zbudowany potok między kolejnymi zleceniami i odtwarza go wyłącznie wtedy, gdy zmieni się konfiguracja mechanizmu uwagi lub kwantyzacji. Wynika to~z~własności opisanych w podrozdziałach @wymienne-warianty-mechanizmu-uwagi[] i @integracja-kwantyzacji[]: wybór jąder obliczeniowych następuje przy budowie modelu, a kwantyzacja modyfikuje wagi nieodwracalnie. Parametry kafelkowania oraz parametry przetwarzania można natomiast zmieniać między zleceniami bez ponownej inicjalizacji.
 
 
 #figure(
@@ -81,5 +80,5 @@ Proces roboczy utrzymuje zbudowany potok między kolejnymi zleceniami i odtwarza
   ),
 ) <img:aplikacja_pokazowa>
 
-Interfejs przeglądarkowy, przedstawiony na @img:aplikacja_pokazowa[rysunku], udostępnia wszystkie trzy osie optymalizacji jako kontrolki formularza, pogrupowane w rozwijane sekcje odpowiadające kafelkowaniu przestrzennemu, kafelkowaniu czasowemu, mechanizmowi uwagi oraz kwantyzacji. Suwaki rozmiaru kafla mają skok równy 32, co zapewnia, że przetwarzany fragment nigdy nie wymaga dopełnienia. Po wysłaniu zlecenia interfejs cyklicznie odpytuje usługę o jego stan i wyświetla wynik po zakończeniu przetwarzania.
+Interfejs przeglądarkowy, przedstawiony na @img:aplikacja_pokazowa[rysunku], udostępnia wszystkie trzy osie optymalizacji jako kontrolki formularza, pogrupowane w rozwijane sekcje odpowiadające kafelkowaniu przestrzennemu, kafelkowaniu czasowemu, mechanizmowi uwagi oraz kwantyzacji. Suwaki rozmiaru kafla mają skok równy 32, co zapewnia, że przetwarzany fragment nigdy nie wymaga dopełnienia. Po wysłaniu zlecenia interfejs cyklicznie odpytuje usługę o~jego stan i wyświetla wynik po zakończeniu przetwarzania.
 
