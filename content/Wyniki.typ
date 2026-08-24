@@ -350,17 +350,6 @@ Wyniki dla zbioru VideoLQ, zawierającego nagrania o degradacjach rzeczywistych,
 
 Wyniki eksperymentu przeprowadzonego na zbiorze VideoLQ potwierdzają zaobserwowaną zależność. Na wprowadzenie kafelkowania przypada zdecydowana większość zmiany każdej z~metryk. Wniosek o neutralności jakościowej optymalizacji obliczeniowych przenosi się zatem na nagrania rzeczywiste.
 
-// Porównanie wizualne dla dwóch klipów o odmiennym charakterze treści przedstawiono na rysunkach @rys:jakosc-porownanie-ptak[] i @rys:jakosc-porownanie-targ[]. Kolumny przedstawiają materiał wejściowy oraz trzy wybrane konfiguracje z @tab:jakosc-videolq[tabeli]: bazową, bazową z kafelkowaniem oraz konfigurację ze wszystkimi optymalizacjami. W obu przykładach wyniki pozostają nierozróżnialne, co potwierdza wniosek o neutralności jakościowej optymalizacji obliczeniowych.
-
-// #figure(
-//   image("../images/porownanie_006.svg", width: 100%),
-//   caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13.],
-// ) <rys:jakosc-porownanie-ptak>
-// #figure(
-//   image("../images/porownanie_008.svg", width: 100%),
-//   caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0.],
-// ) <rys:jakosc-porownanie-targ>
-
 == Porównanie wizualne
 <porownanie-wizualne>
 

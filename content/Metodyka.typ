@@ -64,7 +64,6 @@ Przeprowadzono trzy eksperymenty, zestawione w @tab:eksperymenty[tabeli]. W każ
   [
     #set text(size: 8.5pt)
     #show table.cell.where(y: 0): strong
-    // #show table.cell.where(x: 0): strong
 
     #table(
       columns: (auto, 2fr, 2fr, auto),
