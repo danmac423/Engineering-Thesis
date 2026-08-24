@@ -371,16 +371,16 @@ Zbiór YouHQ40 zawiera materiał referencyjny, więc porównania obejmują równ
 #figure(
   image("../images/porownanie_009_youhq.svg"),
   caption: flex-caption(
-    [Porównanie jakościowe dla zbioru YouHQ40, klip A, klatka N. Kolumny: materiał wejściowy, konfiguracja bazowa, konfiguracja ze wszystkimi optymalizacjami oraz materiał referencyjny],
-    [Porównanie jakościowe dla zbioru YouHQ40, klip A],
+    [Porównanie jakościowe dla zbioru YouHQ40, klip 9, klatka 0. Kolumny: materiał wejściowy, konfiguracja bazowa, konfiguracja ze wszystkimi optymalizacjami oraz materiał referencyjny],
+    [Porównanie jakościowe dla zbioru YouHQ40, klip 9],
   ),
 ) <rys:jakosc-porownanie-youhq-a>
 
 #figure(
   image("../images/porownanie_019_youhq.svg"),
   caption: flex-caption(
-    [Porównanie jakościowe dla zbioru YouHQ40, klip B, klatka N. Układ kolumn jak na @rys:jakosc-porownanie-youhq-a[rysunku]],
-    [Porównanie jakościowe dla zbioru YouHQ40, klip B],
+    [Porównanie jakościowe dla zbioru YouHQ40, klip 19, klatka 0. Układ kolumn jak na @rys:jakosc-porownanie-youhq-a[rysunku]],
+    [Porównanie jakościowe dla zbioru YouHQ40, klip 19],
   ),
 ) <rys:jakosc-porownanie-youhq-b>
 
@@ -401,7 +401,7 @@ Zbiór VideoLQ nie zawiera materiału referencyjnego, więc porównania ogranicz
   image("../images/porownanie_006_videolq.svg", width: 100%),
   caption: flex-caption(
     [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13. Kolumny: materiał wejściowy, konfiguracja bazowa, konfiguracja bazowa z kafelkowaniem, konfiguracja ze wszystkimi optymalizacjami],
-    [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13.],
+    [Porównanie jakościowe dla zbioru VideoLQ, klip 6],
   ),
 ) <rys:jakosc-porownanie-ptak>
 
@@ -409,7 +409,7 @@ Zbiór VideoLQ nie zawiera materiału referencyjnego, więc porównania ogranicz
   image("../images/porownanie_008_videolq.svg", width: 100%),
   caption: flex-caption(
     [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0. Układ kolumn jak na @rys:jakosc-porownanie-ptak[rysunku]],
-    [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0.],
+    [Porównanie jakościowe dla zbioru VideoLQ, klip 8],
   ),
 ) <rys:jakosc-porownanie-targ>
 
