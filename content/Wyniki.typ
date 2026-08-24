@@ -368,34 +368,29 @@ Zestawienia liczbowe uzupełniono o porównania wizualne, osobno dla obu zbioró
 
 Zbiór YouHQ40 zawiera materiał referencyjny, więc porównania obejmują również klatkę wzorcową. Zbliżenia dla dwóch klipów przedstawiono na rysunkach @rys:jakosc-porownanie-youhq-a[] i @rys:jakosc-porownanie-youhq-b[]. Kolumny przedstawiają materiał wejściowy, materiał referencyjny oraz dwie wybrane konfiguracje z @tab:jakosc-youhq40[tabeli]: bazową oraz konfigurację ze wszystkimi optymalizacjami.
 
-// TODO: podmienić placeholder na wygenerowany rysunek
 #figure(
-  placeholder(
-    5cm,
-    [YouHQ40, klip A: pełna klatka LR ze znacznikami ROI oraz zbliżenia w pięciu kolumnach (LR, bazowa, kafelkowanie 192, wszystkie optymalizacje, GT)],
-  ),
+  image("../images/porownanie_009_youhq.svg"),
   caption: flex-caption(
     [Porównanie jakościowe dla zbioru YouHQ40, klip A, klatka N. Kolumny: materiał wejściowy, konfiguracja bazowa, konfiguracja ze wszystkimi optymalizacjami oraz materiał referencyjny],
     [Porównanie jakościowe dla zbioru YouHQ40, klip A],
   ),
 ) <rys:jakosc-porownanie-youhq-a>
 
-// TODO: podmienić placeholder na wygenerowany rysunek
 #figure(
-  placeholder(5cm, [YouHQ40, klip B: układ jak wyżej]),
+  image("../images/porownanie_019_youhq.svg"),
   caption: flex-caption(
     [Porównanie jakościowe dla zbioru YouHQ40, klip B, klatka N. Układ kolumn jak na @rys:jakosc-porownanie-youhq-a[rysunku]],
     [Porównanie jakościowe dla zbioru YouHQ40, klip B],
   ),
 ) <rys:jakosc-porownanie-youhq-b>
 
+#pagebreak()
 Pełne klatki dla dwóch klipów, wraz z odpowiadającym im materiałem referencyjnym, przedstawiono na @rys:klatki-youhq[rysunku]. Wynik wygenerowano w konfiguracji odpowiadającej ostatniej w łańcuchu przyrostowym.
 
-// TODO: podmienić placeholder na wygenerowany rysunek
 #figure(
-  placeholder(11cm, [YouHQ40: dwie kolumny (dwa klipy) i trzy wiersze — LR, SR, GT]),
+  image("../images/pelne_klatki_youhq.svg", width: 100%),
   caption: flex-caption(
-    [Pełne klatki dla zbioru YouHQ40. Kolumny odpowiadają dwóm klipom, wiersze kolejno materiałowi wejściowemu, wynikowi modelu oraz materiałowi referencyjnemu],
+    [Pełne klatki dla zbioru YouHQ40. Kolumny odpowiadają dwóm klipom (klip 0, klatka 5; klip 1, klatka 0), wiersze kolejno materiałowi wejściowemu, wynikowi modelu oraz materiałowi referencyjnemu],
     [Pełne klatki dla zbioru YouHQ40],
   ),
 ) <rys:klatki-youhq>
@@ -403,28 +398,33 @@ Pełne klatki dla dwóch klipów, wraz z odpowiadającym im materiałem referenc
 Zbiór VideoLQ nie zawiera materiału referencyjnego, więc porównania ograniczają się do zestawienia konfiguracji. Zbliżenia dla dwóch klipów o odmiennym charakterze treści przedstawiono na rysunkach @rys:jakosc-porownanie-ptak[] i @rys:jakosc-porownanie-targ[]. Kolumny przedstawiają materiał wejściowy oraz trzy wybrane konfiguracje z @tab:jakosc-videolq[tabeli]: bazową, bazową z kafelkowaniem oraz konfigurację ze wszystkimi optymalizacjami.
 
 #figure(
-  image("../images/porownanie_006.svg", width: 100%),
-  caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13. Kolumny: materiał wejściowy, konfiguracja bazowa, konfiguracja bazowa z kafelkowaniem, konfiguracja ze wszystkimi optymalizacjami],
+  image("../images/porownanie_006_videolq.svg", width: 100%),
+  caption: flex-caption(
+    [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13. Kolumny: materiał wejściowy, konfiguracja bazowa, konfiguracja bazowa z kafelkowaniem, konfiguracja ze wszystkimi optymalizacjami],
+    [Porównanie jakościowe dla zbioru VideoLQ, klip 6, klatka 13.],
+  ),
 ) <rys:jakosc-porownanie-ptak>
 
 #figure(
-  image("../images/porownanie_008.svg", width: 100%),
-  caption: [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0.  Układ kolumn jak na @rys:jakosc-porownanie-ptak[rysunku]],
+  image("../images/porownanie_008_videolq.svg", width: 100%),
+  caption: flex-caption(
+    [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0. Układ kolumn jak na @rys:jakosc-porownanie-ptak[rysunku]],
+    [Porównanie jakościowe dla zbioru VideoLQ, klip 8, klatka 0.],
+  ),
 ) <rys:jakosc-porownanie-targ>
 
+#pagebreak()
 Pełne klatki dla trzech klipów przedstawiono na @rys:klatki-videolq[rysunku]. Wynik wygenerowano w tej samej konfiguracji co dla zbioru YouHQ40.
 
-// TODO: podmienić placeholder na wygenerowany rysunek
 #figure(
-  placeholder(11cm, [VideoLQ: trzy wiersze (trzy klipy) i dwie kolumny — LR oraz SR]),
+  image("../images/pelne_klatki_videolq.svg", width: 100%),
   caption: flex-caption(
-    [Pełne klatki dla zbioru VideoLQ. Kolejne wiersze przedstawiają trzy klipy, kolumny odpowiadają materiałowi wejściowemu oraz wynikowi modelu],
+    [Pełne klatki dla zbioru VideoLQ. Kolejne wiersze przedstawiają trzy klipy (klip 11, klatka 0; klip 12, klatka 0; klip 5, klatka 0), kolumny odpowiadają materiałowi wejściowemu oraz wynikowi modelu],
     [Pełne klatki dla zbioru VideoLQ],
   ),
 ) <rys:klatki-videolq>
 
-#todo("sprawdzic czy to ma sens")
-Porównania potwierdzają wnioski wyciągnięte z metryk: badane konfiguracje dają niemal nierozróżnialne wyniki, w obu zbiorach i niezależnie od charakteru treści. Zestawienie z materiałem referencyjnym wypada natomiast inaczej. Model nie odtwarza wiernie klatki wzorcowej, lecz uzupełnia utracone detale wiarygodnymi, choć odmiennymi strukturami, co jest najlepiej widoczne w drobnych teksturach i na krawędziach. Wynika to z niejednoznaczności zadania superrozdzielczości omówionej w @sformułowanie-problemu[podrozdziale] i jest właściwością samego modelu bazowego, a nie skutkiem wprowadzonych optymalizacji.
+Porównania potwierdzają wnioski wyciągnięte z metryk: badane konfiguracje dają niemal nierozróżnialne wyniki, w obu zbiorach i niezależnie od charakteru treści. Zestawienie z materiałem referencyjnym wypada natomiast inaczej. Model nie odtwarza wiernie klatki wzorcowej, lecz uzupełnia utracone detale wiarygodnymi, choć odmiennymi strukturami, co jest najlepiej widoczne w drobnych teksturach. Wynika to z niejednoznaczności zadania superrozdzielczości omówionej w @sformułowanie-problemu[podrozdziale] i jest właściwością samego modelu bazowego, a nie skutkiem wprowadzonych optymalizacji.
 
 == Podsumowanie wyników
 <podsumowanie-wynikow>
