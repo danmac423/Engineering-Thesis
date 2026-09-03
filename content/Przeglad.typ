@@ -5,7 +5,7 @@
 == Metody konwolucyjne i rekurencyjne
 <metody-konwolucyjne-i-rekurencyjne>
 
-Metody konwolucyjne realizują zadanie VSR poprzez podział wideo na nakładające się na~siebie segmenty, co umożliwia równoległe przetwarzanie sąsiednich klatek w celu rekonstrukcji klatki docelowej. Reprezentatywny dla tej klasy model _EDVR_ @wang2019edvrvideorestorationenhanced wykorzystuje konwolucje deformowalne do adaptacyjnego dopasowania cech przy złożonym ruchu, oraz moduł TSA (_Temporal and Spatial Attention_) do fuzji informacji. Architektury konwolucyjne cechują się dużą stabilnością uczenia i odpornością na dynamiczne zmiany w scenie. Cierpią jednak na ograniczony zasięg kontekstu czasowego oraz wysoki narzut pamięciowy wynikający z~wielokrotnego przetwarzania tych samych klatek. Ponadto niezależna rekonstrukcja kolejnych okien sprzyja powstawaniu artefaktów @Baniya_2024 @liu2022videosuperresolutionbased.
+Metody konwolucyjne realizują zadanie VSR poprzez podział wideo na nakładające się na~siebie segmenty, co umożliwia równoległe przetwarzanie sąsiednich klatek w celu rekonstrukcji klatki docelowej. Reprezentatywny dla tej klasy model _EDVR_ @wang2019edvrvideorestorationenhanced wykorzystuje konwolucje deformowalne do adaptacyjnego dopasowania cech przy złożonym ruchu oraz moduł TSA (_Temporal and Spatial Attention_) do fuzji informacji. Architektury konwolucyjne cechują się dużą stabilnością uczenia i odpornością na dynamiczne zmiany w scenie. ch słabą stroną jest jednak ograniczony zasięg kontekstu czasowego oraz wysoki narzut pamięciowy wynikający z~wielokrotnego przetwarzania tych samych klatek. Ponadto niezależna rekonstrukcja kolejnych okien sprzyja powstawaniu artefaktów @Baniya_2024 @liu2022videosuperresolutionbased.
 
 Metody rekurencyjne traktują wideo jako ciągły strumień danych i przekazują ukryty stan pamięci pomiędzy kolejnymi krokami czasowymi, co pozwala na modelowanie długoterminowych zależności.
 W modelu _BasicVSR_ @chan2021basicvsrsearchessentialcomponents zastosowano dwukierunkową propagację danych w czasie oraz moduł wyrównywania cech oparty na przepływie optycznym (ang.~_optical flow_), który wyrównuje cechy przed przekazaniem ich do bloku rezydualnego. Pozwala to sieci na~efektywne uwzględnianie informacji z całej sekwencji. Główną wadą dwukierunkowych metod rekurencyjnych pozostaje jednak wymóg dostępności całej sekwencji wideo przed~rozpoczęciem przetwarzania oraz ryzyko stopniowego kumulowania i propagowania błędów rekonstrukcji @Baniya_2024 @liu2022videosuperresolutionbased.
@@ -13,7 +13,7 @@ W modelu _BasicVSR_ @chan2021basicvsrsearchessentialcomponents zastosowano dwuki
 == Metody oparte na transformerach
 <metody-oparte-na-transformerach>
 
-Transformery w VSR wykorzystują mechanizmy samouwagi (ang. _self-attention_) do dynamicznego ważenia i modelowania relacji czasowych wzdłuż całej sekwencji @Baniya_2024. Przykładowo, model _VSRT_ @cao2023videosuperresolutiontransformer posiada moduł STCSA (_Spatial-Temporal Convolutional Self-Attention_) do~ekstrakcji lokalnych cech przestrzennych oraz dwukierunkową warstwę BOFF (_Bidirectional Optical Flow-Based Feed-Forward_), opartą na przepływie optycznym, do wyrównywania cech między klatkami. Alternatywne podejście reprezentuje _VRT_ @liang2022vrtvideorestorationtransformer, który zamiast przetwarzać klipy sekwencyjnie, rekonstruuje je równolegle. Wykorzystuje on moduł TMSA (_Temporal Mutual Self-Attention_) do jednoczesnej estymacji ruchu, wyrównywania i fuzji cech.
+Transformery w VSR wykorzystują mechanizmy samouwagi (ang. _self-attention_) do dynamicznego ważenia i modelowania relacji czasowych wzdłuż całej sekwencji @Baniya_2024. Przykładowo, model _VSRT_ @cao2023videosuperresolutiontransformer zawiera moduł STCSA (_Spatial-Temporal Convolutional Self-Attention_) do~ekstrakcji lokalnych cech przestrzennych oraz dwukierunkową warstwę BOFF (_Bidirectional Optical Flow-Based Feed-Forward_), opartą na przepływie optycznym, do wyrównywania cech między klatkami. Alternatywne podejście reprezentuje _VRT_ @liang2022vrtvideorestorationtransformer, który zamiast przetwarzać klipy sekwencyjnie, rekonstruuje je równolegle. Wykorzystuje on moduł TMSA (_Temporal Mutual Self-Attention_) do jednoczesnej estymacji ruchu, wyrównywania i fuzji cech.
 
 Kluczową zaletą metod opartych na transformerach jest ich zdolność do bezstratnego wychwytywania długoterminowych zależności czasowych oraz możliwość równoległego przetwarzania klatek, co pozwala wyeliminować wąskie gardło rekurencji @liang2022vrtvideorestorationtransformer. Głównym ograniczeniem pozostaje jednak bardzo wysoka złożoność obliczeniowa i ogromne zapotrzebowanie na pamięć w porównaniu z klasycznymi sieciami konwolucyjnymi @Baniya_2024.
 
@@ -44,7 +44,7 @@ Aby wyeliminować opóźnienia i spadek wydajności, autorzy wprowadzili lekki m
 
 Głównym rozwiązaniem problemu złożoności obliczeniowej standardowej samouwagi 3D jest zastosowanie blokowo-rzadkiego mechanizmu uwagi z ograniczeniem lokalnym (ang.~_Locality-Constrained Sparse Attention_), którego ogólną zasadę omówiono w @block-sparse-attention-odrzucanie-redundantnych-interakcji[podrozdziale]. FlashVSR wyznacza przybliżoną mapę uwagi poprzez uśrednianie reprezentacji kluczy i~wartości, a pełne obliczenia wykonuje wyłącznie dla obszarów o najwyższych wynikach (ang. _top-k_). Dodatkowe nałożenie lokalnych okien przestrzennych ujednolica kodowanie pozycji między treningiem a wnioskowaniem, co umożliwia skalowanie modelu do bardzo wysokich rozdzielczości.
 
-Zamiast dzielić długie wideo na nachodzące na siebie fragmenty FlashVSR przetwarza nagranie w sposób strumieniowy. Płynność i spójność klatek zapewnia pamięć _KV-cache_ z~mechanizmem okna przesuwnego. Pozwala ona przechowywać najważniejsze cechy obrazu z poprzednich kroków bez konieczności ponownego ich przeliczania.
+Zamiast dzielić długie wideo na nachodzące na siebie fragmenty, FlashVSR przetwarza nagranie w sposób strumieniowy. Płynność i spójność klatek zapewnia pamięć _KV-cache_ z~mechanizmem okna przesuwnego. Pozwala ona przechowywać najważniejsze cechy obrazu z poprzednich kroków bez konieczności ponownego ich przeliczania.
 
 Ostatnim kluczowym elementem architektury jest zastąpienie ciężkiego, standardowego dekodera 3D VAE autorskim, lekkim dekoderem warunkowym (ang. _Tiny Conditional Decoder_). Zapewnia on około siedmiokrotne przyspieszenie etapu rekonstrukcji obrazu w~przestrzeni pikseli w porównaniu z oryginalnym dekoderem sieci Wan, nie powodując przy~tym widocznej utraty jakości wizualnej.
 
@@ -83,31 +83,31 @@ Architektura _FlashVSR_ przełamuje to ograniczenie poprzez sprowadzenie procesu
         [Główne \ ograniczenie],
       ),
 
-      [Konwolucyjne - EDVR @wang2019edvrvideorestorationenhanced],
+      [Konwolucyjne -- EDVR @wang2019edvrvideorestorationenhanced],
       [bardzo krótki],
       [umiarkowane, rośnie z $H dot W$ i szerokością okna],
-      [wysoka wierność, niska jakość percepcyjna - wygładzone tekstury],
+      [wysoka wierność, niska jakość percepcyjna -- wygładzone tekstury],
       [wąski kontekst czasowy, redundantne przetwarzanie okien],
 
-      [Rekurencyjne - \ BasicVSR @chan2021basicvsrsearchessentialcomponents],
+      [Rekurencyjne -- \ BasicVSR @chan2021basicvsrsearchessentialcomponents],
       [bardzo krótki],
       [umiarkowane, stan ukryty utrzymywany przez cały klip],
       [wysoka wierność, percepcyjnie średnia],
       [wymaga całego nagrania z góry, akumulacja błędów],
 
-      [Transformerowe - VRT @liang2022vrtvideorestorationtransformer, VSRT @cao2023videosuperresolutiontransformer],
+      [Transformerowe -- VRT @liang2022vrtvideorestorationtransformer, VSRT @cao2023videosuperresolutiontransformer],
       [średni],
       [wysokie, kwadratowe z długością sekwencji],
       [najwyższa wierność, percepcyjnie średnia],
       [złożoność $O(N^2)$\ samouwagi],
 
-      [Dyfuzyjne wielokrokowe - Upscale-A-Video @zhou2023upscaleavideotemporalconsistentdiffusionmodel],
+      [Dyfuzyjne wielokrokowe -- Upscale-A-Video @zhou2023upscaleavideotemporalconsistentdiffusionmodel],
       [bardzo \ długi],
       [umiarkowane, bufor reużywany między krokami],
       [niższa wierność, wysoka jakość percepcyjna],
       [dziesiątki sekwencyjnych przejść sieci],
 
-      [Dyfuzyjne jednokrokowe - FlashVSR @Zhuang2025FlashVSRTR, DOVE @chen2025doveefficientonestepdiffusion, SeedVR2 @wang2026seedvr2onestepvideorestoration],
+      [Dyfuzyjne jednokrokowe -- FlashVSR @Zhuang2025FlashVSRTR, DOVE @chen2025doveefficientonestepdiffusion, SeedVR2 @wang2026seedvr2onestepvideorestoration],
       [krótki \ (jedno przejście)],
       [wysokie, wagi + KV-cache + aktywacje jednocześnie],
       [niższa wierność, wysoka jakość percepcyjna],
@@ -118,7 +118,7 @@ Architektura _FlashVSR_ przełamuje to ograniczenie poprzez sprowadzenie procesu
     #block(width: 100%, align(left)[
       #set text(size: 7.5pt)
       #super[\*] Wierność mierzona metrykami pełnoreferencyjnymi (PSNR, SSIM),
-      jakość percepcyjna - metrykami LPIPS oraz bezreferencyjnymi.
+      jakość percepcyjna -- metrykami LPIPS oraz bezreferencyjnymi.
     ])
   ],
 ) <tab:vsr-comparison>

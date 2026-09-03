@@ -11,7 +11,7 @@ Kod źródłowy udostępniono w publicznym repozytorium #link("https://github.co
 <wymienne-warianty-mechanizmu-uwagi>
 W implementacji referencyjnej wybór jądra obliczeniowego nie podlegał konfiguracji. Realizował go łańcuch warunków sterowany obecnością maski blokowej oraz dostępnością pakietów w środowisku. _SageAttention_ miało w nim bardzo niski priorytet i było wybierane wyłącznie, gdy FlashAttention było niedostępne. Co więcej, pakiet ten nie był wymieniony wśród zadeklarowanych zależności, przez co ścieżka ta pozostawała w praktyce nieosiągalna.
 
-Łańcuch ten zastąpiono jawnym wyborem sterowanym dwoma niezależnymi parametrami, przekazywanymi przy budowie modelu i propagowanymi do wszystkich bloków transformera. Podział ten wynika z trybu pracy mechanizmu uwagi. Może on działać z maską blokową, łączącą najistotniejsze pary bloków z lokalnym oknem przestrzennym, albo w trybie standardowym, bez maskowania. Ścieżkę z maską obsługuje parametr `mask_attn_mode`, wybierający między jądrem `block_sparse_attn` a jądrem `block_sparse_sage2_attn_cuda` z biblioteki _SpargeAttention_. Ścieżkę bez maski blokowej obsługuje parametr `attn_mode`, wybierający między funkcją `sageattn` a wywołaniem `scaled_dot_product_attention` biblioteki PyTorch.
+Łańcuch ten zastąpiono jawnym wyborem sterowanym dwoma niezależnymi parametrami, przekazywanymi przy budowie modelu i propagowanymi do wszystkich bloków transformera. Podział ten wynika z trybu pracy mechanizmu uwagi. Może on działać z maską blokową, łączącą najistotniejsze pary bloków z lokalnym oknem przestrzennym, albo w trybie standardowym, bez maskowania. Ścieżkę z maską obsługuje parametr `mask_attn_mode`, pozwalający na~wybór między jądrem `block_sparse_attn` a jądrem `block_sparse_sage2_attn_cuda` z~biblioteki _SpargeAttention_. Ścieżkę bez maski blokowej obsługuje parametr `attn_mode`, wybierający między funkcją `sageattn` a wywołaniem `scaled_dot_product_attention` biblioteki PyTorch.
 
 Wybrane jądro wymaga obecności odpowiedniej biblioteki w środowisku. Jeżeli biblioteka nie jest dostępna, potok zgłasza ostrzeżenie i wykonuje uwagę gęstą, co zapobiega przerwaniu przetwarzania, lecz zmienia badaną konfigurację.
 
@@ -19,7 +19,7 @@ Wybrane jądro wymaga obecności odpowiedniej biblioteki w środowisku. Jeżeli 
 <integracja-kwantyzacji>
 Kwantyzację umieszczono w funkcji inicjalizującej potok, po wczytaniu wag i przeniesieniu modelu na kartę graficzną. Realizuje ją pojedyncze wywołanie funkcji `quantize_` biblioteki torchao, której przekazuje się transformer dyfuzyjny oraz obiekt konfiguracji odpowiadający wybranemu trybowi: `Int8WeightOnlyConfig` dla kwantyzacji wag albo~`Int8DynamicActivationInt8WeightConfig` dla kwantyzacji wag i aktywacji.
 
-Biblioteka torchao zastępuje tensory wag warstw liniowych własnymi podtypami, przechowującymi wartości skwantyzowane wraz z parametrami mapowania. Podmiana odbywa się w miejscu, bez modyfikacji definicji modelu, dzięki czemu pozostałe komponenty potoku nie wymagały zmian. Kwantyzacji poddano wyłącznie transformer dyfuzyjny. Dekoder warunkowy, moduł projekcji wejściowej oraz autoenkoder pozostają w precyzji `bfloat16`.
+Biblioteka torchao zastępuje tensory wag warstw liniowych własnymi podtypami, przechowującymi wartości skwantyzowane wraz z parametrami mapowania. Podmiana odbywa się w miejscu, bez modyfikacji definicji modelu, dzięki czemu pozostałe komponenty potoku nie wymagały zmian. Kwantyzacji poddano wyłącznie transformer dyfuzyjny. Dekoder warunkowy, moduł projekcji wejściowej oraz autoenkoder pozostają w precyzji BF16.
 
 Kwantyzacja modyfikuje wagi w sposób nieodwracalny, dlatego zmiana jej trybu wymaga ponownej budowy całego potoku. Zasada ta odnosi się również do modyfikacji wariantu uwagi.
 
@@ -56,12 +56,12 @@ Aplikacja pokazowa umożliwia korzystanie z zaimplementowanych mechanizmów bez~
 na dowolnym nagraniu. Składa się z usługi sieciowej oraz interfejsu przeglądarkowego, komunikujących się przez protokół HTTP.
 
 Usługa udostępnia cztery operacje. Zlecenie przetwarzania przyjmowane jest pod
-adresem `POST /jobs`, wraz z plikiem wejściowym oraz pełną konfiguracją
+adresem `POST /jobs` wraz z plikiem wejściowym oraz pełną konfiguracją
 w formacie JSON, obejmującą tryb uwagi, tryb kwantyzacji i parametry
 kafelkowania, a w odpowiedzi zwracany jest identyfikator
 zlecenia. Operacja `GET /jobs/{id}` zwraca stan zlecenia wraz z postępem
 przetwarzania, `GET /jobs/{id}/download` pozwala pobrać gotowe nagranie,
-a `GET /jobs` wylistować wszystkie zlecenia przyjęte przez usługę. Próba
+a `GET /jobs` zwrócić listę wszystkich zleceń przyjętych przez usługę. Próba
 pobrania wyniku zlecenia, którego przetwarzanie jeszcze się nie zakończyło,
 kończy się odmową ze wskazaniem bieżącego stanu.
 

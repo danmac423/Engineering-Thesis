@@ -133,7 +133,7 @@ Dobór rozmiaru kafla wymaga zatem uwzględnienia obu czynników, przy czym redu
 == Granica wykonalności
 <granica-wykonalnosci>
 
-Konfiguracja bazowa kończy się na karcie docelowej przepełnieniem pamięci przy rozdzielczości 192 $times$ 352 oraz 256 $times$ 448. W obu przypadkach awaria następuje w pierwszym kroku odszumiania, w funkcji aktywacji wewnątrz bloku transformera. Modelu w postaci udostępnionej przez autorów nie da się zatem uruchomić na karcie konsumenckiej nawet w~scenariuszu, dla którego autorzy podają wyniki wydajnościowe.
+Konfiguracja bazowa kończy się na karcie docelowej przepełnieniem pamięci przy rozdzielczości 192 $times$ 352 oraz 256 $times$ 448. W obu przypadkach proces kończy się błędem braku pamięci (OOM) w pierwszym kroku odszumiania, w funkcji aktywacji wewnątrz bloku transformera. Modelu w postaci udostępnionej przez autorów nie da się zatem uruchomić na karcie konsumenckiej nawet w~scenariuszu, dla którego autorzy podają wyniki wydajnościowe.
 
 Skalę zapotrzebowania określono na akceleratorze A100, gdzie obie konfiguracje wykonują się poprawnie. Wyniki zestawiono w @tab:referencja[tabeli].
 
@@ -160,7 +160,7 @@ Skalę zapotrzebowania określono na akceleratorze A100, gdzie obie konfiguracje
 ) <tab:referencja>
 
 
-Pomiary na akceleratorze A100 pozwalają określić skalę deficytu. Przy rozdzielczości wskazanej przez autorów zapotrzebowanie wynosi 14 844 MiB, przy rozdzielczości bliższej typowym nagraniom rośnie do 23 512 MiB. Wartości te przekraczają pojemność karty docelowej odpowiednio około półtorakrotnie i blisko dwuipółkrotnie. Deficyt jest zatem na~tyle duży, że nie dałoby się go pokryć samą kwantyzacją ani optymalizacją mechanizmu uwagi, których~łączny efekt zmierzony w eksperymencie E1 nie przekracza 11%.
+Pomiary na akceleratorze A100 pozwalają określić skalę deficytu. Przy rozdzielczości wskazanej przez autorów zapotrzebowanie wynosi 14 844 MiB, a przy rozdzielczości bliższej typowym nagraniom rośnie do 23 512 MiB. Wartości te przekraczają pojemność karty docelowej odpowiednio około półtorakrotnie i blisko dwuipółkrotnie. Deficyt jest zatem na~tyle duży, że nie dałoby się go pokryć samą kwantyzacją ani optymalizacją mechanizmu uwagi, których~łączny efekt zmierzony w eksperymencie E1 nie przekracza 11%.
 
 Zmierzona wartość 14 844 MiB jest wyższa od 11,13 GB raportowanych przez autorów dla~tej samej rozdzielczości. Rozbieżność wynika najpewniej z przyjętej miary zużycia pamięci, omówionej w @wydajnosc[podrozdziale]. Przyjęta tu miara jest ostrożniejsza, ponieważ o wystąpieniu przepełnienia decyduje rozmiar puli zarezerwowanej.
 

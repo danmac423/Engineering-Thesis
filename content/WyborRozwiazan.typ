@@ -12,7 +12,7 @@ Jako wariant odniesienia dla uwagi gęstej przyjęto mechanizm SDPA (`scaled_dot
 
 Wariantem odniesienia dla selekcji rzadkiej jest uwaga blokowo-rzadka autorów _FlashVSR_ @Zhuang2025FlashVSRTR. Jako alternatywę wybrano _SpargeAttention_ @zhang2025spargeattentionaccuratetrainingfreesparse, realizujące to samo zadanie w sposób adaptacyjny. Wykorzystanie architektury SageAttention jako wspólnej podstawy sprawia, że~oba rozwiązania można łączyć bez żadnych konfliktów implementacyjnych.
 
-Długość pamięci podręcznej kluczy i wartości oraz zasięg okna lokalnego zachowano w wartościach przyjętych przez autorów modelu. Udział wybieranych par bloków jest natomiast zadawany względem stałej rozdzielczości wskazanej przez autorów i przeliczany na~powierzchnię faktycznie przetwarzanego fragmentu, przez co efektywna liczba wybieranych bloków zależy od rozmiaru kafla.
+Długość pamięci podręcznej kluczy i wartości oraz zasięg okna lokalnego pozostawiono na poziomie wartości przyjętych przez autorów modelu. Udział wybieranych par bloków jest natomiast zadawany względem stałej rozdzielczości wskazanej przez autorów i przeliczany na~powierzchnię faktycznie przetwarzanego fragmentu, przez co efektywna liczba wybieranych bloków zależy od rozmiaru kafla.
 
 == Kwantyzacja
 <kwantyzacja>
@@ -28,7 +28,7 @@ Zapotrzebowanie na pamięć w obrębie pojedynczego wywołania modelu zależy od
 
 Kosztem takiego podejścia jest redundancja obliczeń w obszarze zakładek, ryzyko wystąpienia widocznych artefaktów na granicach niezależnie rekonstruowanych kafli oraz~zmiana efektywnej rzadkości uwagi w zależności od ich rozmiaru. Sam sposób łączenia fragmentów obrazu opisano w @kafelkowanie-przestrzenne[podrozdziale].
 
-Analogiczny mechanizm zastosowano w wymiarze czasowym. Mimo strumieniowego trybu pracy modelu bufory wejściowe i wyjściowe długich nagrań pozostają kosztowne pamięciowo, sekwencję dzielono zatem na segmenty o ustalonej długości. Realizację tego podziału opisano w @kafelkowanie-czasowe[podrozdziale].
+Analogiczny mechanizm zastosowano w wymiarze czasowym. Mimo strumieniowego trybu pracy modelu, bufory wejściowe i wyjściowe długich nagrań pozostają kosztowne pamięciowo, sekwencję dzielono zatem na segmenty o ustalonej długości. Realizację tego podziału opisano w @kafelkowanie-czasowe[podrozdziale].
 
 == Zestawienie technik optymalizacji
 <zestawienie-technik-optymalizacji>
@@ -65,7 +65,7 @@ Wybrane techniki zestawiono w @tab:zestawienie-technik[tabeli]. Ich wykorzystani
       [SpargeAttention @zhang2025spargeattentionaccuratetrainingfreesparse],
       [skrócenie czasu inferencji],
 
-      [Kwantyzacja], [brak (bfloat16)], [INT8 wag; INT8 wag \ i aktywacji], [redukcja zużycia pamięci],
+      [Kwantyzacja], [brak (BF16)], [INT8 wag; INT8 wag \ i aktywacji], [redukcja zużycia pamięci],
 
       [Kafelkowanie \ przestrzenne],
       [wyłączone],
