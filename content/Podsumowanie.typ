@@ -9,13 +9,13 @@
 
 W ramach pracy opracowano następujące elementy:
 
-- Analiza istniejących metod VSR i identyfikacja luki badawczej - @przeglad-istniejacych-rozwiazan[rozdział],
-- Dobór trzech osi optymalizacji wraz z uzasadnieniem - @wybór-rozwiązań-do-implementacji[rozdział],
-- Modularny pakiet z konfigurowalnym potokiem inferencji, powstały z refaktoryzacji implementacji referencyjnej - podrozdziały @architektura-pakietu[]-@interfejsy-systemu[],
-- Implementacja wymiennych wariantów mechanizmu uwagi, kwantyzacji INT8 oraz kafelkowania przestrzennego i czasowego - podrozdziały @wymienne-warianty-mechanizmu-uwagi[]-@kafelkowanie-czasowe[],
-- Aplikacja pokazowa - @aplikacja-pokazowa[podrozdział],
-- Metodyka pomiarowa i plan eksperymentów - @metodyka-badan-i-testy[rozdział],
-- Wyniki pomiarów wydajności, granicy wykonalności i jakości rekonstrukcji - @wyniki-i-ich-omowienie[rozdział].
+- Analiza istniejących metod VSR i identyfikacja luki badawczej -- @przeglad-istniejacych-rozwiazan[rozdział],
+- Dobór trzech osi optymalizacji wraz z uzasadnieniem -- @wybór-rozwiązań-do-implementacji[rozdział],
+- Modularny pakiet z konfigurowalnym potokiem inferencji, powstały z refaktoryzacji implementacji referencyjnej -- podrozdziały @architektura-pakietu[]-@interfejsy-systemu[],
+- Implementacja wymiennych wariantów mechanizmu uwagi, kwantyzacji INT8 oraz kafelkowania przestrzennego i czasowego -- podrozdziały @wymienne-warianty-mechanizmu-uwagi[]-@kafelkowanie-czasowe[],
+- Aplikacja pokazowa -- @aplikacja-pokazowa[podrozdział],
+- Metodyka pomiarowa i plan eksperymentów -- @metodyka-badan-i-testy[rozdział],
+- Wyniki pomiarów wydajności, granicy wykonalności i jakości rekonstrukcji -- @wyniki-i-ich-omowienie[rozdział].
 
 Cel pracy, którym było umożliwienie inferencji jednokrokowego modelu superrozdzielczości wideo opartego na dyfuzji na karcie graficznej wyposażonej w 10 GB pamięci VRAM, został zrealizowany. Modelu w postaci udostępnionej przez autorów nie da się uruchomić na karcie docelowej przy żadnej z badanych rozdzielczości wejściowych. W konfiguracji zalecanej w~@wnioski-badawcze[podrozdziale] model przetwarza ten sam materiał w dostępnym budżecie pamięci, kosztem wydłużenia czasu inferencji i akceptowalnej utraty jakości rekonstrukcji.
 
